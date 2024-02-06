@@ -32,3 +32,4 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/", authRoute);
+app.use("/activities", activityRoute);
