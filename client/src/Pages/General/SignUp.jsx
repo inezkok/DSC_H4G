@@ -52,9 +52,9 @@ const SignUp = () => {
       if (res.data.success && res.data.user.role === "Admin") {
         handleSuccess(res.data.message);
         navigate("/admin/home");
-      } else if (res.data.success && res.data.user.role === "Patron") {
+      } else if (res.data.success && res.data.user.role === "Volunteer") {
         handleSuccess(res.data.message);
-        navigate("/patron/home");
+        navigate("/volunteer/home");
       } else {
         handleError(res.data.message);
       }
@@ -81,7 +81,7 @@ const SignUp = () => {
           <label htmlFor="role">Role</label>
           <select name="role" value={role} onChange={handleOnChange}>
             <option value="">Select Role</option>
-            <option value="Patron">Patron</option>
+            <option value="Volunteer">Volunteer</option>
             <option value="Admin">Admin</option>
           </select>
         </div>

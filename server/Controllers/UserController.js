@@ -102,21 +102,21 @@ module.exports.getUsers = async (req, res, next) => {
     }
 };
 
-// get all patrons
-module.exports.getPatrons = async (req, res, next) => {
+// get all volunteers
+module.exports.getVolunteers = async (req, res, next) => {
     try {
-        const users = await User.find({ role: "Patron" });
+        const users = await User.find({ role: "Volunteer" });
 
         res.status(200).json({
             success: true,
-            message: "All patrons are found",
+            message: "All volunteers are found",
             data: users,
             count: users.length,
         });
     } catch (err) {
         res.status(404).json({
             success: false,
-            message: "Cannot find all patrons",
+            message: "Cannot find all volunteers",
         });
         next();
     }

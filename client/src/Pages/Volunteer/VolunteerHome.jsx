@@ -4,7 +4,7 @@ import { useCookies } from "react-cookie";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
-const PatronHome = () => {
+const VolunteerHome = () => {
   const navigate = useNavigate();
   const [cookies, removeCookie] = useCookies([]);
   const [username, setUsername] = useState("");
@@ -30,7 +30,7 @@ const PatronHome = () => {
 
       console.log(data);
 
-      return status && user.role === "Patron"
+      return status && user.role === "Volunteer"
         ? toast(`Hello ${user.username}`, {
             position: "top-right",
             toastId: 'stop welcome duplication'
@@ -49,7 +49,7 @@ const PatronHome = () => {
   return (
     <>
       <div className="user_home_page">
-        <h1>User Home Page</h1>
+        <h1>Volunteer Home Page</h1>
         <h4>
           {" "}
           Welcome <span>{username}</span>
@@ -61,4 +61,4 @@ const PatronHome = () => {
   )
 }
 
-export default PatronHome
+export default VolunteerHome

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { createUser, deleteUser, updateUser, getUser, getUsers, getPatrons, getAdmins} = require("../Controllers/UserController");
+const { createUser, deleteUser, updateUser, getUser, getUsers, getVolunteers, getAdmins} = require("../Controllers/UserController");
 
 // create user
 router.post("/", createUser);
@@ -17,7 +17,7 @@ router.get("/:id", getUser);
 router.get("/", getUsers);
 
 // get all patrons
-router.get("/find/patron", getPatrons);
+router.get("/find/volunteer", getVolunteers);
 
 // get all admins
 router.get("/find/admin", getAdmins);

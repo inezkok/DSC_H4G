@@ -50,9 +50,9 @@ const Login = () => {
       if (res.data.success && res.data.user.role === "Admin") {
         handleSuccess(res.data.message);
         navigate("/admin/home");
-      } else if (res.data.success && res.data.user.role === "Patron") {
+      } else if (res.data.success && res.data.user.role === "Volunteer") {
         handleSuccess(res.data.message);
-        navigate("/patron/home");
+        navigate("/volunteer/home");
       } else {
         handleError(res.data.message);
       }
