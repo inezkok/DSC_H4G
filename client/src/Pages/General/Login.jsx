@@ -99,6 +99,10 @@ const Login = () => {
         <span>
           Already have an account? <Link to={"/signup"}>Signup</Link>
         </span>
+
+        <span>
+          Return to <Link to={"/"}> Landing Page</Link>
+        </span>
       </form>
 
       <ToastContainer />
