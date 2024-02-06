@@ -18,12 +18,19 @@ const AdminHome = () => {
 
       const {data} = await axios.post("http://localhost:4000", {}, { withCredentials: true });
       const {status, user} = data;
+
+      if (!user) {
+        removeCookie("token");
+        navigate("/login");
+        return;
+      }
+
       setUsername(user.username);
       setRole(user.role);
 
       console.log(data);
 
-      return status && user.role === "admin"
+      return status && user.role === "Admin"
         ? toast(`Hello ${user.username}`, {
             position: "top-right",
             toastId: 'stop welcome duplication'

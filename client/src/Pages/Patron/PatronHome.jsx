@@ -4,7 +4,7 @@ import { useCookies } from "react-cookie";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
-const UserHome = () => {
+const PatronHome = () => {
   const navigate = useNavigate();
   const [cookies, removeCookie] = useCookies([]);
   const [username, setUsername] = useState("");
@@ -18,12 +18,19 @@ const UserHome = () => {
 
       const {data} = await axios.post("http://localhost:4000", {}, { withCredentials: true });
       const {status, user} = data;
+
+      if (!user) {
+        removeCookie("token");
+        navigate("/login");
+        return;
+      }
+
       setUsername(user.username);
       setRole(user.role);
 
       console.log(data);
 
-      return status && user.role === "user"
+      return status && user.role === "Patron"
         ? toast(`Hello ${user.username}`, {
             position: "top-right",
             toastId: 'stop welcome duplication'
@@ -54,4 +61,4 @@ const UserHome = () => {
   )
 }
 
-export default UserHome
+export default PatronHome

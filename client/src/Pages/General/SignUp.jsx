@@ -49,12 +49,12 @@ const SignUp = () => {
         withCredentials: true
       });
       
-      if (res.data.success && res.data.user.role === "admin") {
+      if (res.data.success && res.data.user.role === "Admin") {
         handleSuccess(res.data.message);
         navigate("/admin/home");
-      } else if (res.data.success && res.data.user.role === "user") {
+      } else if (res.data.success && res.data.user.role === "Patron") {
         handleSuccess(res.data.message);
-        navigate("/user/home");
+        navigate("/patron/home");
       } else {
         handleError(res.data.message);
       }
@@ -81,8 +81,8 @@ const SignUp = () => {
           <label htmlFor="role">Role</label>
           <select name="role" value={role} onChange={handleOnChange}>
             <option value="">Select Role</option>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
+            <option value="Patron">Patron</option>
+            <option value="Admin">Admin</option>
           </select>
         </div>
         

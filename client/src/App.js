@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { Login, Signup, Landing, AdminHome, UserHome } from "./Pages";
+import { Login, Signup, Landing, AdminHome, PatronHome } from "./Pages";
 
 function App() {
   return (
@@ -9,7 +9,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/admin/home" element={<AdminHome />} />
-        <Route path="/user/home" element={<UserHome />} />
+        <Route path="/patron/home" element={<PatronHome />} />
       </Routes>
     </div>
   );
