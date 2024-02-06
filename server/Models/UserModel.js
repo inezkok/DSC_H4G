@@ -11,6 +11,30 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Your username is required"],
   },
+  fullname: {
+    type: String,
+    default: ""
+  },
+  telehandle: {
+    type: String,
+    default: ""
+  },
+  birthYear: {
+    type: String,
+    default: ""
+  },
+  gender: {
+    type: String,
+    default: ""
+  },
+  currentStatus: {
+    type: String,
+    default: ""
+  },
+  location: {
+    type: String,
+    default: ""
+  },
   password: {
     type: String,
     required: [true, "Your password is required"],
