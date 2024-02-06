@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import NavBar from "../../Components/Navbar";
+import "../../Styles/AdminHome.css";
 
 const AdminHome = () => {
   const navigate = useNavigate();
@@ -41,20 +43,12 @@ const AdminHome = () => {
     verifyCookie();
   }, [cookies, navigate, removeCookie, role, username]);
 
-  const Logout = () => {
-    removeCookie("token");
-    navigate("/login");
-  }
-
   return (
     <>
       <div className="admin_home_page">
+        <NavBar />
         <h1>Admin Home Page</h1>
-        <h4>
-          {" "}
-          Welcome <span>{username}</span>
-        </h4>
-        <button onClick={Logout}>LOGOUT</button>
+        <h2>Welcome <span>{username}</span></h2>
       </div>
       <ToastContainer />
     </>

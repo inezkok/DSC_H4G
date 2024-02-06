@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import NavBar from "../../Components/Navbar";
+import "../../Styles/VolunteerHome.css"
 
 const VolunteerHome = () => {
   const navigate = useNavigate();
@@ -48,12 +50,10 @@ const VolunteerHome = () => {
 
   return (
     <>
-      <div className="user_home_page">
+      <div className="volunteer_home_page">
+        <NavBar />
         <h1>Volunteer Home Page</h1>
-        <h4>
-          {" "}
-          Welcome <span>{username}</span>
-        </h4>
+        <h2>Welcome <span>{username}</span></h2>
         <button onClick={Logout}>LOGOUT</button>
       </div>
       <ToastContainer />
