@@ -9,6 +9,9 @@ const PORT = 4000;
 
 const authRoute = require("./Routes/AuthRoute");
 const userRoute = require("./Routes/UserRoute");
+const formRoute = require("./Routes/FormRoute");
+const questionRoute = require("./Routes/QuestionRoute");
+const answerRoute = require("./Routes/AnswerRoute");
 
 mongoose
   .connect(MONGO_URL, {
@@ -35,3 +38,6 @@ app.use(express.json());
 
 app.use("/", authRoute);
 app.use("/user", userRoute);
+app.use("/form", formRoute);
+app.use("/question", questionRoute);
+app.use("/answer", answerRoute);
