@@ -80,7 +80,7 @@ const SignUp = () => {
         <div>
           <label htmlFor="role">Role</label>
           <select name="role" value={role} onChange={handleOnChange}>
-            <option value="">Select Role</option>
+          <option value="">Select Role</option>
             <option value="Volunteer">Volunteer</option>
             <option value="Admin">Admin</option>
           </select>

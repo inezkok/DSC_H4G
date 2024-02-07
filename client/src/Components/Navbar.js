@@ -94,7 +94,7 @@ export default function NavBar() {
         logout();
     } else if (command === "Profile") {
         // navigate to profile page
-        alert("Profile");
+        navigate("/profile");
     }
   }
 

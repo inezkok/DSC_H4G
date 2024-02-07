@@ -43,18 +43,12 @@ const VolunteerHome = () => {
     verifyCookie();
   }, [cookies, navigate, removeCookie, role, username]);
 
-  const Logout = () => {
-    removeCookie("token");
-    navigate("/login");
-  }
-
   return (
     <>
       <div className="volunteer_home_page">
         <NavBar />
         <h1>Volunteer Home Page</h1>
         <h2>Welcome <span>{username}</span></h2>
-        <button onClick={Logout}>LOGOUT</button>
       </div>
       <ToastContainer />
     </>
