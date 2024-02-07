@@ -1,0 +1,106 @@
+.profile_page {
+    height: 100vh;
+    width: 100vw;
+    font-size: 3rem;
+    flex-direction: column;
+    gap: 1rem;
+    color: #000000;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+  }
+    
+  .profile_page span {
+    color: rgb(255, 111, 0);
+  }
+    
+  .profile_page button:hover {
+    background-color: rgba(0, 212, 255, 1);
+  }
+    
+  @media only screen and (max-width: 1200px){
+    .profile_page{
+      font-size: 1.5rem;
+    }
+    .profile_page button {
+      margin: 0.6rem 1rem;
+      font-size: 1.5rem;
+    }
+  }
+
+.profile_page form {
+    display: flex;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.form-group label {
+  width: 15vw;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.form-group input {
+  width: 60%;
+  height: 2rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  font-size: 1rem;
+  align-items: center;
+  gap: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #fdf1e0;
+}
+
+.form-group select {
+  width: 60%;
+  height: 2rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  font-size: 1rem;
+  align-items: center;
+  gap: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #fdf1e0;
+}
+
+
+.profile_buttons {
+  display: inline-flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  margin-bottom: 1rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.profile_buttons button:hover {
+  background-color: #fee2c7;
+  color: #a9622b;
+}
+
+.profile_buttons button {
+  margin: 0.5rem 1rem;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  background-color: #ff6f00;
+  color: white;
+  border: none;
+  cursor: pointer;
+}

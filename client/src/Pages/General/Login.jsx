@@ -47,12 +47,12 @@ const Login = () => {
         withCredentials: true
       });
       
-      if (res.data.success && res.data.user.role === "admin") {
+      if (res.data.success && res.data.user.role === "Admin") {
         handleSuccess(res.data.message);
         navigate("/admin/home");
-      } else if (res.data.success && res.data.user.role === "user") {
+      } else if (res.data.success && res.data.user.role === "Volunteer") {
         handleSuccess(res.data.message);
-        navigate("/user/home");
+        navigate("/volunteer/home");
       } else {
         handleError(res.data.message);
       }

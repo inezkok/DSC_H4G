@@ -4,9 +4,9 @@ import { useCookies } from "react-cookie";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import NavBar from "../../Components/Navbar";
-import "../../Styles/AdminHome.css";
+import "../../Styles/VolunteerHome.css"
 
-const AdminHome = () => {
+const VolunteerHome = () => {
   const navigate = useNavigate();
   const [cookies, removeCookie] = useCookies([]);
   const [username, setUsername] = useState("");
@@ -32,7 +32,7 @@ const AdminHome = () => {
 
       console.log(data);
 
-      return status && user.role === "Admin"
+      return status && user.role === "Volunteer"
         ? toast(`Hello ${user.username}`, {
             position: "top-right",
             toastId: 'stop welcome duplication'
@@ -45,9 +45,9 @@ const AdminHome = () => {
 
   return (
     <>
-      <div className="admin_home_page">
+      <div className="volunteer_home_page">
         <NavBar />
-        <h1>Admin Home Page</h1>
+        <h1>Volunteer Home Page</h1>
         <h2>Welcome <span>{username}</span></h2>
       </div>
       <ToastContainer />
@@ -55,4 +55,4 @@ const AdminHome = () => {
   )
 }
 
-export default AdminHome
+export default VolunteerHome

@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import axios from "axios";
-import NavBar from "../Components/Navbar";
-import useFetch from '../Hooks/useFetch';
-import '../Styles/CreateActivity.css';
+import '../../Styles/AdminCreateActivity.css';
 import { ToastContainer, toast } from "react-toastify";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -18,22 +17,23 @@ import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import NavBar from "../../Components/Navbar";
 
 const AdminCreateActivity = () => {
 
-    const [email, setEmail] = useState("");
     const [cookies, removeCookie] = useCookies([]);
-    const [userId, setUserId] = useState("");
+    const [username, setUsername] = useState("");
+    const [role, setRole] = useState("");
     
     const [title, setTitle] = useState('');
     const [schedule, setSchedule] = useState('');
-    const [scheduleDay, setScheduleDay] = useState('');
-    const [scheduleTime, setScheduleTime] = useState('');
+    const [scheduleDay, setScheduleDay] = useState([]);
+    const [scheduleTimeStart, setScheduleTimeStart] = useState(dayjs('2022-04-17T15:30'))
+    const [scheduleTimeEnd, setScheduleTimeEnd] = useState(dayjs('2022-04-17T15:30'))
     const [date, setDate] = useState('');
     const [location, setLocation] = useState('');
 
     const navigate = useNavigate();
-    const { data } = useFetch(`http://localhost:4000/api/users`);
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
 
@@ -47,45 +47,49 @@ const AdminCreateActivity = () => {
         'Sunday'
     ];
 
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+      PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+      },
+    };
+
     dayjs.extend(customParseFormat);
 
     useEffect(() => {
         const verifyCookie = async () => {
-            if (!cookies.token) {
-              navigate("/login");
-              return;
-            }
-            
-            try {
-                const res = await axios.post("http://localhost:4000", {}, { withCredentials: true });
-
-                setEmail(res.data.email);
-
-                if (!res.data.status) {
-                  removeCookie("token");
-                  navigate("/login");
-                }
-            } catch (error) {
-                console.error('verifyCookie error:', error);
-                navigate("/login");
-            }
+          if (!cookies.token) {
+            navigate("/login");
+          }
+    
+          const {data} = await axios.post("http://localhost:4000", {}, { withCredentials: true });
+          const {status, user} = data;
+    
+          if (!user) {
+            removeCookie("token");
+            navigate("/login");
+            return;
+          }
+    
+          setUsername(user.username);
+          setRole(user.role);
+    
+          console.log(data);
+    
+          return status && user.role === "Admin"
+            ? toast(`Hello ${user.username}`, {
+                position: "top-right",
+                toastId: 'stop welcome duplication'
+              })
+            : (removeCookie("token"), navigate("/login"));
         };
 
-        const getUser = () => {
-            if (email !== "") {
-                try {
-                    if (data.data) {
-                        setUserId(data.data.find(user => user.email === email)._id);
-                    }
-                } catch (error) {
-                    console.error('getUser error:', error);
-                }
-            }
-        }
-          
         verifyCookie();
-        getUser();
-    }, [navigate, cookies, removeCookie, email, data, id, userId]);
+      }, [cookies, navigate, removeCookie, role, username]);
 
     const handleError = (err) => {
         toast.error(err, {
@@ -115,6 +119,10 @@ const AdminCreateActivity = () => {
                 handleError('Please fill out all fields');
                 return;
             }
+
+            let schedule = `${scheduleDay} ${scheduleTimeStart.format('HH:mm')} - ${scheduleTimeEnd.format('HH:mm')}`;
+            setSchedule(schedule);
+            setDate('');
 
             const res = await axios.post(`http://localhost:4000/activities/`, data, { withCredentials: true });
 
@@ -167,14 +175,14 @@ const AdminCreateActivity = () => {
                     <div className="field_info_container">
                         <label htmlFor="schedule">Schedule</label>
                         <FormControl sx={{ m: 1, width: 300 }}>
-                            <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+                            <InputLabel id="demo-multiple-checkbox-label">Day</InputLabel>
                             <Select
                                 labelId="demo-multiple-checkbox-label"
                                 id="demo-multiple-checkbox"
                                 multiple
                                 value={scheduleDay}
                                 onChange={handleChangeDay}
-                                input={<OutlinedInput label="Tag" />}
+                                input={<OutlinedInput label="Day" />}
                                 renderValue={(selected) => selected.join(', ')}
                                 MenuProps={MenuProps}
                             >
@@ -189,14 +197,18 @@ const AdminCreateActivity = () => {
 
 
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <label htmlFor="schedule">Schedule</label>
-
-                            <DatePicker 
-                                label="Date" 
-                                value={dayjs(date)} 
-                                onChange={(date) => setDate(dayjs(date).format('DD/MM/YYYY'))} 
-                                sx={{bgcolor: '#C9E0E7', borderRadius: '5px'}}
-                            />
+                                <label htmlFor="schedule">Time</label>
+                                <TimePicker
+                                    label="Start"
+                                    value={scheduleTimeStart}
+                                    onChange={(newValue) => setScheduleTimeStart(newValue)}
+                                />
+                                
+                                <TimePicker
+                                    label="End"
+                                    value={scheduleTimeEnd}
+                                    onChange={(newValue) => setScheduleTimeEnd(newValue)}
+                                />
                         </LocalizationProvider>
                     </div>
                         
@@ -215,6 +227,6 @@ const AdminCreateActivity = () => {
             <ToastContainer className="toast_container"/>
         </div>
     )
-}
+};
 
-export default AdminCreateActivity;
+export default AdminCreateActivity
