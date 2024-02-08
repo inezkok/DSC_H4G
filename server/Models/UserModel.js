@@ -52,7 +52,11 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: new Date(),
-  }
+  },
+  sessions: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Session"
+  }]
 });
 
 userSchema.pre("save", async function () {
