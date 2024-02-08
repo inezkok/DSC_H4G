@@ -11,6 +11,9 @@ const authRoute = require("./Routes/AuthRoute");
 const userRoute = require("./Routes/UserRoute");
 const activityRoute = require("./Routes/ActivityRoute");
 const impactRoute = require("./Routes/ImpactRoute");
+const registerFormRoute = require("./Routes/RegisterFormRoute");
+const feedbackFormRoute = require("./Routes/FeedbackFormRoute");
+const responseRoute = require("./Routes/ResponseRoute");
 
 mongoose
   .connect(MONGO_URL, {
@@ -39,3 +42,6 @@ app.use("/", authRoute);
 app.use("/activities", activityRoute);
 app.use("/user", userRoute);
 app.use("/impact", impactRoute);
+app.use("/register-form", registerFormRoute);
+app.use("/feedback-form", feedbackFormRoute);
+app.use("/response", responseRoute);
