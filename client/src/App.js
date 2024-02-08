@@ -1,7 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { Login, Signup, Landing, AdminHome, VolunteerHome, Profile } from "./Pages";
-import AdminCreateActivity from "./Pages/Admin/AdminCreateActivity";
-import AdminProgramTracker from "./Pages/Admin/AdminProgramTracker";
+import { Login, Signup, Landing, AdminHome, VolunteerHome, Profile, AdminCreateActivity, AdminProgramTracker } from "./Pages";
 
 function App() {
   return (
