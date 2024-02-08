@@ -50,15 +50,9 @@ const AdminProgramTracker = () => {
       <div className="admin_program_tracker">
         <NavBar />
         <div className="container">
-            <div className="section">
-                <h1>Programs</h1>
+            <h1>Programs</h1>
 
-            </div>
-        
-            <div className="section">
-                <h1>Attendance</h1>
-
-            </div>
+            
 
         </div>
         

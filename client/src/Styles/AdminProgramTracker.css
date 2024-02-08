@@ -30,14 +30,6 @@
   .container {
     display: flex;
   }
-
-  .section {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    padding: 10px;
-    
-  }
     
   @media only screen and (max-width: 1200px){
     .admin_program_tracker{
