@@ -9,13 +9,14 @@ const PORT = 4000;
 
 const authRoute = require("./Routes/AuthRoute");
 const userRoute = require("./Routes/UserRoute");
+const activityRoute = require("./Routes/ActivityRoute");
 
 mongoose
   .connect(MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("MongoDB is  connected successfully"))
+  .then(() => console.log("MongoDB is connected successfully"))
   .catch((err) => console.error(err));
 
 app.listen(PORT, () => {
@@ -34,4 +35,5 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/", authRoute);
+app.use("/activities", activityRoute);
 app.use("/user", userRoute);

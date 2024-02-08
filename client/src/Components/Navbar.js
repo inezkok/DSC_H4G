@@ -79,7 +79,7 @@ export default function NavBar() {
         break;
       case "Program Tracker":
         // navigate to page
-        alert("Program Tracker");
+        if (role === "Admin") navigate("/admin/programtracker");
         break;
       case "Volunteering History":
         // navigate to page
