@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import NavBar from "../../Components/Navbar";
+import "../../Styles/VolunteerHome.css"
 
-const UserHome = () => {
+const VolunteerHome = () => {
   const navigate = useNavigate();
   const [cookies, removeCookie] = useCookies([]);
   const [username, setUsername] = useState("");
@@ -18,12 +20,19 @@ const UserHome = () => {
 
       const {data} = await axios.post("http://localhost:4000", {}, { withCredentials: true });
       const {status, user} = data;
+
+      if (!user) {
+        removeCookie("token");
+        navigate("/login");
+        return;
+      }
+
       setUsername(user.username);
       setRole(user.role);
 
       console.log(data);
 
-      return status && user.role === "user"
+      return status && user.role === "Volunteer"
         ? toast(`Hello ${user.username}`, {
             position: "top-right",
             toastId: 'stop welcome duplication'
@@ -34,24 +43,16 @@ const UserHome = () => {
     verifyCookie();
   }, [cookies, navigate, removeCookie, role, username]);
 
-  const Logout = () => {
-    removeCookie("token");
-    navigate("/login");
-  }
-
   return (
     <>
-      <div className="user_home_page">
-        <h1>User Home Page</h1>
-        <h4>
-          {" "}
-          Welcome <span>{username}</span>
-        </h4>
-        <button onClick={Logout}>LOGOUT</button>
+      <div className="volunteer_home_page">
+        <NavBar />
+        <h1>Volunteer Home Page</h1>
+        <h2>Welcome <span>{username}</span></h2>
       </div>
       <ToastContainer />
     </>
   )
 }
 
-export default UserHome
+export default VolunteerHome

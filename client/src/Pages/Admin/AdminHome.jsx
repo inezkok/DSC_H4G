@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import NavBar from "../../Components/Navbar";
+import "../../Styles/AdminHome.css";
 
 const AdminHome = () => {
   const navigate = useNavigate();
@@ -18,12 +20,19 @@ const AdminHome = () => {
 
       const {data} = await axios.post("http://localhost:4000", {}, { withCredentials: true });
       const {status, user} = data;
+
+      if (!user) {
+        removeCookie("token");
+        navigate("/login");
+        return;
+      }
+
       setUsername(user.username);
       setRole(user.role);
 
       console.log(data);
 
-      return status && user.role === "admin"
+      return status && user.role === "Admin"
         ? toast(`Hello ${user.username}`, {
             position: "top-right",
             toastId: 'stop welcome duplication'
@@ -34,20 +43,12 @@ const AdminHome = () => {
     verifyCookie();
   }, [cookies, navigate, removeCookie, role, username]);
 
-  const Logout = () => {
-    removeCookie("token");
-    navigate("/login");
-  }
-
   return (
     <>
       <div className="admin_home_page">
+        <NavBar />
         <h1>Admin Home Page</h1>
-        <h4>
-          {" "}
-          Welcome <span>{username}</span>
-        </h4>
-        <button onClick={Logout}>LOGOUT</button>
+        <h2>Welcome <span>{username}</span></h2>
       </div>
       <ToastContainer />
     </>
