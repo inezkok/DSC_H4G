@@ -23,15 +23,17 @@ const VolunteerRegForm = () => {
 
     const [cookies, removeCookie] = useCookies([]);
     const [username, setUsername] = useState("");
+    const [userId, setUserId] = useState("");
     const [role, setRole] = useState("");
+
+    const [activityId, setActivityId] = useState("");
+    const [activityTitle, setActivityTitle] = useState("");
+    const [activityDays, setActivityDays] = useState("");
+    const [activityTime, setActivityTime] = useState("");
     
-    const [title, setTitle] = useState('');
-    const [schedule, setSchedule] = useState('');
-    const [scheduleDay, setScheduleDay] = useState([]);
-    const [scheduleTimeStart, setScheduleTimeStart] = useState(dayjs('2022-04-17T15:30'))
-    const [scheduleTimeEnd, setScheduleTimeEnd] = useState(dayjs('2022-04-17T15:30'))
-    const [date, setDate] = useState('');
-    const [location, setLocation] = useState('');
+    const [sessionDate, setSessionDate] = useState('');
+    const [questions, setQuestions] = useState([]);
+    const [choices, setChoices] = useState([]); // what the users chose for each qn
 
     const navigate = useNavigate();
     const { id } = useParams();
@@ -56,6 +58,7 @@ const VolunteerRegForm = () => {
     
           setUsername(user.username);
           setRole(user.role);
+          setUserId(user._id);
     
           console.log(data);
     
@@ -64,7 +67,28 @@ const VolunteerRegForm = () => {
             : (removeCookie("token"), navigate("/login"));
         };
 
+        const getActivity = async () => {
+            if (userId !== "") {
+                try {
+                    const res = await axios.get(`http://localhost:4000/activities`, { withCredentials: true });
+                    const selectedActivity = res.data.data.find(activity => activity._id === id);
+                    if (selectedActivity) {
+                        setActivityId(selectedActivity._id);
+                        setActivityTitle(selectedActivity.title);
+                        setActivityDays(selectedActivity.scheduleDays);
+                        setActivityTime(selectedActivity.scheduleTime);
+                        console.log(activityTitle + 'at' + activityTime)
+                    } else {
+                        console.error('Selected activity not found');
+                    }
+                } catch (error) {
+                    console.error('getActivity error:', error);
+                }
+            }
+        }
+
         verifyCookie();
+        getActivity();
       }, [cookies, navigate, removeCookie, role, username]);
 
     const handleError = (err) => {
@@ -80,33 +104,28 @@ const VolunteerRegForm = () => {
         });
     }
 
-    const handleSave = async () => {
+    const handleSubmit = async () => {
         const data = {
-            title,
-            schedule,
-            date,
-            location
+            userId,
+            sessionDate,
+            choices
         };
         setLoading(true);
 
         try {
-            if (title === "") {
+            if (sessionDate === "" || choices.length === 0) {
                 setLoading(false);
                 handleError('Please fill out all fields');
                 return;
             }
 
-            let schedule = `${scheduleDay} ${scheduleTimeStart.format('HH:mm')} - ${scheduleTimeEnd.format('HH:mm')}`;
-            setSchedule(schedule);
-            setDate('');
-
-            const res = await axios.post(`http://localhost:4000/activities/`, data, { withCredentials: true });
+            const res = await axios.post(`http://localhost:4000//register-form/:regFormId/:userId/`, data, { withCredentials: true });
 
             if (res.data.success) {
                 setLoading(false);
-                handleSuccess('Activity created successfully');
+                handleSuccess('Your sign up is successful!');
                 setTimeout(() => {
-                    navigate('/admin/home');
+                    navigate('/volunteer/home');
                 }, 3000);
             }
         } catch (error) {
@@ -115,20 +134,11 @@ const VolunteerRegForm = () => {
         }
     };
 
-    const handleChangeDay = (event) => {
-        const {
-          target: { value },
-        } = event;
-        setScheduleDay(
-          // On autofill we get a stringified value.
-          typeof value === 'string' ? value.split(',') : value,
-        );
-      };
-
     const handleCancel = () => {
         setLoading(false);
-        navigate('/admin/home');
+        navigate('/volunteer/home');
     };
+
 
     return (
         <div className="session_registration_page">
@@ -137,7 +147,7 @@ const VolunteerRegForm = () => {
             <div className="session_registration_header">
                 <h1>Volunteer Registration</h1>
                 <h2>You are registering for</h2>
-                <h3>insert activity name</h3>
+                <h3>{activityTitle}</h3>
             </div>
 
             {loading ? (
@@ -150,27 +160,33 @@ const VolunteerRegForm = () => {
 
                             <DatePicker 
                                 label="Session Date" 
-                                value={dayjs(date)} 
-                                onChange={(date) => setDate(dayjs(date).format('MM/DD/YYYY'))} 
+                                value={dayjs(sessionDate)} 
+                                onChange={(date) => setSessionDate(dayjs(date).format('MM/DD/YYYY'))} 
                                 minDate={dayjs('01/01/2024')} 
                                 maxDate={dayjs('20/12/2024')}
                                 sx={{bgcolor: '#C9E0E7', borderRadius: '5px'}}
                             />
                         </LocalizationProvider>
                     </div>
-                    
-                    <div className="field_info_container">
-                        <label htmlFor="title">Mobile number</label>
-                        <input type="text" placeholder={"Enter mobile number"} value={title} onChange={(e) => setTitle(e.target.value)} />
-                    </div>
                         
                     <div className="field_info_container">
                         <label htmlFor="location">Preferred communication means</label>
-                        <input type="text" placeholder={"Enter address"} value={location} onChange={(e) => setLocation(e.target.value)} />
+                        <FormControl fullWidth>
+                        <Select
+                            id="demo-simple-select"
+                            value={choices}
+                            label="Preferred communiction means"
+                            onChange={(e) => setChoices(e.target.value)}
+                        >
+                            <MenuItem value={10}>Ten</MenuItem>
+                            <MenuItem value={20}>Twenty</MenuItem>
+                            <MenuItem value={30}>Thirty</MenuItem>
+                        </Select>
+                        </FormControl>
                     </div>
 
                     <div className="create_activity_buttons">
-                        <button onClick={handleSave} className="save_button">Confirm registration</button>
+                        <button onClick={handleSubmit} className="save_button">Confirm registration</button>
                         <button onClick={handleCancel} className="cancel_button">Cancel</button>
                     </div>
                 </div>

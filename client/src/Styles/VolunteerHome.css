@@ -13,8 +13,26 @@
     color: rgb(255, 111, 0);
   }
     
+  .volunteer_home_page h3 {
+    flex: auto;
+    padding: 0%;
+    margin: 1rem;
+    font-size: 2rem;
+    
+  }
+    
   .volunteer_home_page button:hover {
     background-color: rgba(0, 212, 255, 1);
+  }
+
+  .header {
+    flex: auto;
+    margin-top: 12rem;
+    flex-direction: column;
+  }
+
+  .activities {
+    flex-direction: inherit;
   }
     
   @media only screen and (max-width: 1200px){
