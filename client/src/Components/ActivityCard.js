@@ -32,12 +32,10 @@ const StyledRating = styled(Rating)({
 });
 
 const ActivityCardComponent = (props) => {
-  const {title,content}=props
-
   return (
     <StyledCard sx={{ minWidth: 275 }} elevation={5}>
-      <CardHeader title={title} />
-      <CardContent>{content}
+      <CardHeader title={props.title} />
+      <CardContent>{new Date(props.date).toLocaleDateString()}
         <StyledRating
           name="customized-color"
           getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}

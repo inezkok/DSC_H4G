@@ -11,7 +11,7 @@ const StyledCard = styled((props) => (
     />
   ))(({ theme }) => ({
     maxWidth: "100%",
-    height: '25vw',
+    height: '35vw',
       // margin: "0 auto",
       marginBottom: "2rem",
       marginTop: "2rem",
@@ -24,7 +24,7 @@ const StyledCard = styled((props) => (
     const {title,content}=props
   
     return (
-      <StyledCard sx={{ minWidth: 275 }} elevation={5}>
+      <StyledCard sx={{ width: "100%" }} elevation={5}>
         <CardHeader title={title} />
         <CardContent>{content}
         <LineChart
@@ -36,11 +36,12 @@ const StyledCard = styled((props) => (
                 data: [2, 5.5, 2, 8.5, 1.5, 5],
             },
             ]}
-            width={500}
+            width={1000}
             height={300}
         />
         </CardContent>
       </StyledCard>
+      
     );
   };
   
