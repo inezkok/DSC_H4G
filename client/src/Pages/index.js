@@ -7,6 +7,7 @@ export {default as VolunteerHome} from './Volunteer/VolunteerHome'
 export {default as Profile} from './General/Profile'
 
 export {default as AdminCreateActivity} from './Admin/AdminCreateActivity'
+export {default as AdminEditActivity} from './Admin/AdminEditActivity'
 export {default as AdminProgramTracker} from './Admin/AdminProgramTracker'
 
 export {default as VolunteerRegForm} from './Volunteer/VolunteerRegForm'
