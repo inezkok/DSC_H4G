@@ -1,4 +1,19 @@
 const Response = require('../Models/ResponseModel');
+const RegisterForm = require('../Models/RegisterFormModel');
+const FeedbackForm = require('../Models/FeedbackFormModel');
+const Activity = require('../Models/ActivityModel');
+const Session = require('../Models/SessionModel');
+const User = require('../Models/UserModel');
+
+const formatDate = (date) => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const d = new Date(date);
+    const dd = d.getDate();
+    const mmm = months[d.getMonth()];
+    const yyyy = d.getFullYear();
+    return `${dd} ${mmm} ${yyyy}`;
+}
 
 // create feedback response
 module.exports.createFeedbackResponse = async (req, res) => {
@@ -34,7 +49,7 @@ module.exports.createFeedbackResponse = async (req, res) => {
 // create register response
 module.exports.createRegisterResponse = async (req, res) => {
     const { regFormId, userId } = req.params;
-    const { answers, createdAt } = req.body;
+    const { answers, sessionDate } = req.body;
 
     try {
         // dont need to check if the response already exists, 
@@ -47,7 +62,96 @@ module.exports.createRegisterResponse = async (req, res) => {
             });
         }
 
-        const response = await Response.create({ regFormId, userId, answers, createdAt });
+        // create or update session
+        const activity = await Activity.findOne({ registerForm: regFormId });
+        const existingSession = await Session.findOne({ 
+            activityId: activity._id,
+            sessionDate: sessionDate
+        });
+
+        if (existingSession) {
+            const maxCapacity = activity.capacity;
+            const currentCapacity = existingSession.volunteers.length;
+
+            // check if session is full
+            if (currentCapacity >= maxCapacity) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Session is full",
+                });
+            }
+
+            // check if user already registered for this session
+            if (existingSession.volunteers.includes(userId)) {
+                return res.status(500).json({
+                    success: false,
+                    message: "User already registered for this session",
+                });
+            }
+
+            // update session and user
+            await Session.findByIdAndUpdate(existingSession._id, {
+                $push: { volunteers: userId }
+            }, { new: true });
+
+            await User.findByIdAndUpdate(userId, {
+                $push: { sessions: existingSession._id }
+            }, { new: true });
+        } else {
+            // create new session
+            const newSession = await Session.create({
+                activityId: activity._id,
+                sessionDate: sessionDate,
+                volunteers: [userId]
+            });
+
+            // create feedback form for the session
+            const feedbackForm = await FeedbackForm.create({
+                sessionId: newSession._id,
+                description: "Volunteer Feedback Form for " + activity.title + " , " + formatDate(sessionDate),
+                questions: [{
+                    questionText: "Rate how convenient was the sign up process. (Inconvenient 1 to Very Convenient 5)",
+                    options: [{value: "1"}, {value: "2"}, {value: "3"}, {value: "4"}, {value: "5"}]
+                }, {
+                    questionText: "Rate how much of an impact do you feel the volunteer work had on you. (No impact 1 to Great impact 5)",
+                    options: [{value: "1"}, {value: "2"}, {value: "3"}, {value: "4"}, {value: "5"}]
+                }, {
+                    questionText: "Rate how easy was it for you to get along with the others in the midst of your volunteer work. (Not easy 1 to Very easy 5)",
+                    options: [{value: "1"}, {value: "2"}, {value: "3"}, {value: "4"}, {value: "5"}]
+                }, {
+                    questionText: "Rate what is your overall satisfaction on volunteer with GUI (Very dissatisfied 1 to Super satisfied)",
+                    options: [{value: "1"}, {value: "2"}, {value: "3"}, {value: "4"}, {value: "5"}]
+                }, {
+                    questionText: "Rate how likely is it that you would recommend others to volunteer with GUI? (Very unlikely 1 to Extremely likely 5",
+                    options: [{value: "1"}, {value: "2"}, {value: "3"}, {value: "4"}, {value: "5"}]
+                }, {
+                    questionText: "What more can we do for you in strengthening GUI Volunteer Community?",
+                    options: [{value: "Encourage interest groups"}, {value: "Provide learning opportunities"}, {value: "Organise potluck sessions"}, {value: "Send regular updates"}]
+                }]
+            })
+
+            // update session with feedback form
+            const updatedSession = await Session.findByIdAndUpdate(newSession._id, {
+                feedbackForm: feedbackForm._id
+            }, { new: true });
+
+            // update activity and user with session
+            await Activity.findByIdAndUpdate(activity._id, {
+                $push: { sessions: updatedSession._id }
+            }, { new: true });
+
+            await User.findByIdAndUpdate(userId, {
+                $push: { sessions: updatedSession._id }
+            }, { new: true });
+        }
+
+        // create response with corresponding feedback form
+        const response = await Response.create({ regFormId, userId, answers });
+
+        await RegisterForm.findByIdAndUpdate(regFormId, {
+            $push: { sessionDates: sessionDate }
+        }, { new: true })
+
         res.status(200).json({
             success: true,
             message: "Register Response is created",
@@ -62,7 +166,7 @@ module.exports.createRegisterResponse = async (req, res) => {
     };
 };
 
-// delete response
+// delete response (probs not needed, but just in case)
 module.exports.deleteResponse = async (req, res) => {
     const responseId = req.params.responseId;
 
@@ -81,7 +185,7 @@ module.exports.deleteResponse = async (req, res) => {
     }
 }
 
-// update response
+// update response (probs not needed, but just in case)
 module.exports.updateResponse = async (req, res) => {
     const responseId = req.params.responseId;
 

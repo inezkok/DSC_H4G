@@ -2,7 +2,7 @@ const router = require("express").Router();
 const { createFeedbackForm, deleteFeedbackForm, updateFeedbackForm, getFeedbackForm, getAllFeedbackForms } = require("../Controllers/FeedbackFormController");
 
 // create feedback form
-router.post("/:activityId", createFeedbackForm);
+router.post("/:sessionId", createFeedbackForm);
 
 // delete feedback form
 router.delete("/:feedbackFormId", deleteFeedbackForm);

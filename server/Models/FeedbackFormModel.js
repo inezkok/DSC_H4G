@@ -1,13 +1,9 @@
 const mongoose = require("mongoose");
 
 const feedbackFormSchema = new mongoose.Schema({
-    activityId: {
+    sessionId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Activity",
-        required: true
-    },
-    sessionDate: {
-        type: Date,
+        ref: "Session",
         required: true
     },
     name: {

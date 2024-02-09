@@ -26,25 +26,25 @@ const AdminCreateActivity = () => {
     const [role, setRole] = useState("");
     
     const [title, setTitle] = useState('');
-    const [schedule, setSchedule] = useState('');
-    const [scheduleDay, setScheduleDay] = useState([]);
+    const [scheduleDays, setScheduleDays] = useState([]);
+    const [scheduleTime, setScheduleTime] = useState('');
     const [scheduleTimeStart, setScheduleTimeStart] = useState(dayjs('2022-04-17T15:30'))
     const [scheduleTimeEnd, setScheduleTimeEnd] = useState(dayjs('2022-04-17T15:30'))
-    const [date, setDate] = useState('');
     const [location, setLocation] = useState('');
+    const [capacity, setCapacity] = useState(0);
 
     const navigate = useNavigate();
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
 
     const days = [
+        'Sunday',
         'Monday',
         'Tuesday',
         'Wednesday',
         'Thursday',
         'Friday',
-        'Saturday',
-        'Sunday'
+        'Saturday'
     ];
 
     const ITEM_HEIGHT = 48;
@@ -100,16 +100,19 @@ const AdminCreateActivity = () => {
     const handleSuccess = (msg) => {
         toast.success(msg, {
             position: "bottom-left",
-            autoClose: 3000,
+            autoClose: 2000,
         });
     }
 
     const handleSave = async () => {
+        setScheduleTime(scheduleTimeStart.format('HH:mm') + " - " + scheduleTimeEnd.format('HH:mm'))
+
         const data = {
             title,
-            schedule,
-            date,
-            location
+            scheduleDays,
+            scheduleTime,
+            location,
+            capacity
         };
         setLoading(true);
 
@@ -120,9 +123,7 @@ const AdminCreateActivity = () => {
                 return;
             }
 
-            let schedule = `${scheduleDay} ${scheduleTimeStart.format('HH:mm')} - ${scheduleTimeEnd.format('HH:mm')}`;
-            setSchedule(schedule);
-            setDate('');
+            console.log(data)
 
             const res = await axios.post(`http://localhost:4000/activities/`, data, { withCredentials: true });
 
@@ -143,7 +144,7 @@ const AdminCreateActivity = () => {
         const {
           target: { value },
         } = event;
-        setScheduleDay(
+        setScheduleDays(
           // On autofill we get a stringified value.
           typeof value === 'string' ? value.split(',') : value,
         );
@@ -180,7 +181,7 @@ const AdminCreateActivity = () => {
                                 labelId="demo-multiple-checkbox-label"
                                 id="demo-multiple-checkbox"
                                 multiple
-                                value={scheduleDay}
+                                value={scheduleDays}
                                 onChange={handleChangeDay}
                                 input={<OutlinedInput label="Day" />}
                                 renderValue={(selected) => selected.join(', ')}
@@ -188,7 +189,7 @@ const AdminCreateActivity = () => {
                             >
                                 {days.map((day) => (
                                   <MenuItem key={day} value={day}>
-                                    <Checkbox checked={scheduleDay.indexOf(day) > -1} />
+                                    <Checkbox checked={scheduleDays.indexOf(day) > -1} />
                                     <ListItemText primary={day} />
                                   </MenuItem>
                                 ))}
@@ -201,13 +202,19 @@ const AdminCreateActivity = () => {
                                 <TimePicker
                                     label="Start"
                                     value={scheduleTimeStart}
-                                    onChange={(newValue) => setScheduleTimeStart(newValue)}
+                                    onChange={(newValue) => {
+                                        setScheduleTimeStart(newValue)
+                                        setScheduleTime(newValue.format('HH:mm') + " - " + scheduleTimeEnd.format('HH:mm'))
+                                    }}
                                 />
                                 
                                 <TimePicker
                                     label="End"
                                     value={scheduleTimeEnd}
-                                    onChange={(newValue) => setScheduleTimeEnd(newValue)}
+                                    onChange={(newValue) => {
+                                        setScheduleTimeEnd(newValue)
+                                        setScheduleTime(scheduleTimeStart.format('HH:mm') + " - " + newValue.format('HH:mm'))
+                                    }}
                                 />
                         </LocalizationProvider>
                     </div>
@@ -215,6 +222,11 @@ const AdminCreateActivity = () => {
                     <div className="field_info_container">
                         <label htmlFor="location">Location</label>
                         <input type="text" placeholder={"Enter address"} value={location} onChange={(e) => setLocation(e.target.value)} />
+                    </div>
+
+                    <div className="field_info_container">
+                        <label htmlFor="capacity">Maximum Capacity for each Session</label>
+                        <input type="number" placeholder={"Enter capacity"} value={capacity} onChange={(e) => setCapacity(e.target.value)} />
                     </div>
 
                     <div className="create_activity_buttons">

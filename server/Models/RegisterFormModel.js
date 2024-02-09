@@ -21,6 +21,11 @@ const registerFormSchema = new mongoose.Schema({
             value: String
         }]
     }],
+    sessionDates: {
+        type: [Date],
+        default: [],
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now

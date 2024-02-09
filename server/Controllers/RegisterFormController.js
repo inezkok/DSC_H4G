@@ -4,7 +4,7 @@ const Response = require('../Models/ResponseModel');
 // create register form
 module.exports.createRegisterForm = async (req, res) => {
     const activityId = req.params.activityId;
-    const { name, description, questions, createdAt } = req.body;
+    const { name, description, questions } = req.body;
 
     try {
         const existingRegisterForm = await RegisterForm.findOne({ activityId });
@@ -15,7 +15,7 @@ module.exports.createRegisterForm = async (req, res) => {
             });
         }
 
-        const registerForm = await RegisterForm.create({ activityId, name, description, questions, createdAt });
+        const registerForm = await RegisterForm.create({ activityId, name, description, questions });
 
         res.status(200).json({
             success: true,

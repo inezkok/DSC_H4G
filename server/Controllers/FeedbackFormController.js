@@ -3,11 +3,11 @@ const Response = require('../Models/ResponseModel');
 
 // create feedback form
 module.exports.createFeedbackForm = async (req, res) => {
-    const activityId = req.params.activityId;
-    const { sessionDate, name, description, questions, createdAt } = req.body;
+    const sessionId = req.params.sessionId;
+    const { name, description, questions, createdAt } = req.body;
 
     try {
-        const existingFeedbackForm = await FeedbackForm.findOne({ activityId, sessionDate });
+        const existingFeedbackForm = await FeedbackForm.findOne({ sessionId });
         if (existingFeedbackForm) {
             return res.status(400).json({
                 success: false,
@@ -15,7 +15,7 @@ module.exports.createFeedbackForm = async (req, res) => {
             });
         }
 
-        const feedbackForm = await FeedbackForm.create({ activityId, sessionDate, name, description, questions, createdAt });
+        const feedbackForm = await FeedbackForm.create({ sessionId, name, description, questions, createdAt });
 
         res.status(200).json({
             success: true,

@@ -85,6 +85,7 @@ export default function NavBar() {
         // navigate to page
         alert("Volunteering History");
         break;
+
       default:
         navigate("/");
     }
