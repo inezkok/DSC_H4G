@@ -5,6 +5,10 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import NavBar from "../../Components/Navbar";
 import "../../Styles/AdminHome.css";
+import AdminCardComponent from "../../Components/AdminCard";
+import StatsCardComponent from "../../Components/StatisticCard";
+import { Container } from "@mui/material"
+
 
 const AdminHome = () => {
   const navigate = useNavigate();
@@ -45,14 +49,23 @@ const AdminHome = () => {
 
   return (
     <>
-      <div className="admin_home_page">
-        <NavBar />
-        <h1>Admin Home Page</h1>
-        <h2>Welcome <span>{username}</span></h2>
+      <div className='admin_home_page'>
+      <NavBar />
+      <Container>
+        <h5>Dashboard</h5>
+        <AdminCardComponent />
+        <AdminCardComponent />
+        <AdminCardComponent />
+      </Container>
+      
+      <Container>
+        <StatsCardComponent/>
+      </Container>
       </div>
       <ToastContainer />
     </>
   )
 }
+
 
 export default AdminHome
