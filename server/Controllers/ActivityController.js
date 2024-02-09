@@ -15,6 +15,14 @@ module.exports.createActivity = async (req, res) => {
             })
         }
 
+        const existingActivity = await Activity.findOne({title, scheduleDays, scheduleTime, location, capacity});
+        if (existingActivity) {
+            return res.status(400).json({
+                success: false,
+                message: "Activity already exists",
+            })
+        }
+
         const activity = await Activity.create({
             title: title,
             scheduleDays: scheduleDays,

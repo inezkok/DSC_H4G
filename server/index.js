@@ -14,6 +14,7 @@ const impactRoute = require("./Routes/ImpactRoute");
 const registerFormRoute = require("./Routes/RegisterFormRoute");
 const feedbackFormRoute = require("./Routes/FeedbackFormRoute");
 const responseRoute = require("./Routes/ResponseRoute");
+const sessionRoute = require("./Routes/SessionRoute");
 
 mongoose
   .connect(MONGO_URL, {
@@ -45,3 +46,4 @@ app.use("/impact", impactRoute);
 app.use("/register-form", registerFormRoute);
 app.use("/feedback-form", feedbackFormRoute);
 app.use("/response", responseRoute);
+app.use("/session", sessionRoute);
