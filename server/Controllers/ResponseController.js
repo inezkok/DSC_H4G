@@ -51,8 +51,6 @@ module.exports.createRegisterResponse = async (req, res) => {
     const { regFormId, userId } = req.params;
     const { answers, sessionDate } = req.body;
 
-    let feedbackFormId = null;
-
     try {
         // dont need to check if the response already exists, 
         // since user can submit multiple responses (for same feedback form, same register form)
@@ -99,8 +97,6 @@ module.exports.createRegisterResponse = async (req, res) => {
             await User.findByIdAndUpdate(userId, {
                 $push: { sessions: existingSession._id }
             }, { new: true });
-
-            feedbackFormId = existingSession.feedbackForm;
         } else {
             // create new session
             const newSession = await Session.create({
@@ -139,8 +135,6 @@ module.exports.createRegisterResponse = async (req, res) => {
                 feedbackForm: feedbackForm._id
             }, { new: true });
 
-            feedbackFormId = updatedSession.feedbackForm;
-
             // update activity and user with session
             await Activity.findByIdAndUpdate(activity._id, {
                 $push: { sessions: updatedSession._id }
@@ -152,7 +146,7 @@ module.exports.createRegisterResponse = async (req, res) => {
         }
 
         // create response with corresponding feedback form
-        const response = await Response.create({ regFormId, feedbackFormId, userId, answers });
+        const response = await Response.create({ regFormId, userId, answers });
 
         await RegisterForm.findByIdAndUpdate(regFormId, {
             $push: { sessionDates: sessionDate }
