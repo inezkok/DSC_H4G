@@ -13,6 +13,7 @@ const VolunteerHome = () => {
   const navigate = useNavigate();
   const [cookies, removeCookie] = useCookies([]);
   const [username, setUsername] = useState("");
+  const [sessions, setSessions] = useState("");
   const [role, setRole] = useState("");
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const VolunteerHome = () => {
 
       setUsername(user.username);
       setRole(user.role);
+      setSessions(user.sessions);
 
       console.log(data);
 
@@ -44,7 +46,7 @@ const VolunteerHome = () => {
     };
 
     verifyCookie();
-  }, [cookies, navigate, removeCookie, role, username]);
+  }, [cookies, navigate, removeCookie, role, username, sessions]);
 
   return (
     <>
@@ -54,9 +56,9 @@ const VolunteerHome = () => {
           Your upcoming session
         </Container>
         <Container>
-          <ActivityCardComponent />
-          <ActivityCardComponent />
-          <ActivityCardComponent />
+          <ActivityCardComponent props={sessions[0]}/>
+          <ActivityCardComponent props={sessions[1]}/>
+          <ActivityCardComponent props={sessions[2]}/>
         </Container>
         <Container>
           Sign up for more volunteering sessions

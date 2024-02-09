@@ -33,7 +33,6 @@ const AdminHome = () => {
 
       setUsername(user.username);
       setRole(user.role);
-
       console.log(data);
 
       return status && user.role === "Admin"
@@ -44,8 +43,15 @@ const AdminHome = () => {
         : (removeCookie("token"), navigate("/login"));
     };
 
+    const ImpactTracker = async () => {
+      const {newdata} = await axios.get("http://localhost:4000/impact/", {}, { withCredentials: true });
+      console.log(newdata.data);
+    }
+
     verifyCookie();
   }, [cookies, navigate, removeCookie, role, username]);
+
+
 
   return (
     <>
@@ -53,6 +59,8 @@ const AdminHome = () => {
       <NavBar />
       <Container>
         <h5>Dashboard</h5>
+        <AdminCardComponent />
+        <AdminCardComponent />
         <AdminCardComponent />
         <AdminCardComponent />
         <AdminCardComponent />
