@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { Login, Signup, Landing, AdminHome, VolunteerHome, Profile, AdminCreateActivity, AdminProgramTracker } from "./Pages";
+import { Login, Signup, Landing, AdminHome, VolunteerHome, VolunteerRegForm, Profile, AdminCreateActivity, AdminProgramTracker } from "./Pages";
 
 function App() {
   return (
@@ -12,6 +12,7 @@ function App() {
         <Route path="/admin/programtracker" element={<AdminProgramTracker />} />
         <Route path="/admin/activities/create" element={<AdminCreateActivity />} />
         <Route path="/volunteer/home" element={<VolunteerHome />} />
+        <Route path="/volunteer/register" element={<VolunteerRegForm />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </div>
