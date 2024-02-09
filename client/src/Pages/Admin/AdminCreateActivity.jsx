@@ -79,12 +79,9 @@ const AdminCreateActivity = () => {
           setRole(user.role);
     
           console.log(data);
-    
+
           return status && user.role === "Admin"
-            ? toast(`Hello ${user.username}`, {
-                position: "top-right",
-                toastId: 'stop welcome duplication'
-              })
+            ? (console.log("user is admin"))
             : (removeCookie("token"), navigate("/login"));
         };
 
