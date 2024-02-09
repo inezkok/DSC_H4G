@@ -99,7 +99,7 @@ export default function NavBar() {
   }
 
   return role === "Admin" ? (
-    <AppBar position="static"  style={{ background: '#FA9654' }}>
+    <AppBar position="fixed"  style={{ background: '#FA9654' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
@@ -174,7 +174,8 @@ export default function NavBar() {
       </Container>
     </AppBar>
   ) : (
-    <AppBar position="static"  style={{ background: '#FA9654' }}>
+    
+    <AppBar position="fixed"  style={{ background: '#FA9654' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
