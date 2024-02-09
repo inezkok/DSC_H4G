@@ -26,12 +26,12 @@ const VolunteerRegForm = () => {
     const [userId, setUserId] = useState("");
     const [role, setRole] = useState("");
 
-    const [activityId, setActivityId] = useState("");
     const [activityTitle, setActivityTitle] = useState("");
-    const [activityDays, setActivityDays] = useState("");
+    const [activityDays, setActivityDays] = useState([]);
     const [activityTime, setActivityTime] = useState("");
     
     const [sessionDate, setSessionDate] = useState('');
+    const [regForm, setRegForm] = useState('');
     const [questions, setQuestions] = useState([]);
     const [choices, setChoices] = useState([]); // what the users chose for each qn
 
@@ -70,17 +70,19 @@ const VolunteerRegForm = () => {
         const getActivity = async () => {
             if (userId !== "") {
                 try {
-                    const res = await axios.get(`http://localhost:4000/activities`, { withCredentials: true });
-                    const selectedActivity = res.data.data.find(activity => activity._id === id);
-                    if (selectedActivity) {
-                        setActivityId(selectedActivity._id);
+                    const res = await axios.get(`http://localhost:4000/activities/${id}`, { withCredentials: true });
+                    // const selectedActivity = res.data.data.find(activity => activity._id === id);
+                    const selectedActivity = res.data;
+                    console.log(selectedActivity);
+                    if (res) {
                         setActivityTitle(selectedActivity.title);
                         setActivityDays(selectedActivity.scheduleDays);
                         setActivityTime(selectedActivity.scheduleTime);
-                        console.log(activityTitle + 'at' + activityTime)
+                        setRegForm(selectedActivity.registerForm);
                     } else {
                         console.error('Selected activity not found');
                     }
+                    console.log(activityTitle + 'at' + activityTime);
                 } catch (error) {
                     console.error('getActivity error:', error);
                 }
@@ -168,6 +170,37 @@ const VolunteerRegForm = () => {
                             />
                         </LocalizationProvider>
                     </div>
+
+                    {questions.map((question, index) => (
+  <FormControl key={index}>
+    <InputLabel>{question.questionText}</InputLabel>
+    <Select>
+      {question.options.map((option, optionIndex) => (
+        <MenuItem value={option.value} key={optionIndex}>
+          {option.value}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+))}
+
+
+                    {questions.map((question, index) => (
+                        <div className="field_info_container">
+                            <label htmlFor="title">{question[index].questionText}</label>
+                            <FormControl>
+                                <Select
+                                    value={choices}
+                                    label={question[index].questionText}
+                                    onChange={(e) => setChoices(e.target.value)}
+                                >
+                                    {questions[index].options.map((option, num) => (
+                                        <MenuItem value={option}>option </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </div>
+                    ))}
                         
                     <div className="field_info_container">
                         <label htmlFor="location">Preferred communication means</label>
