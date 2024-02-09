@@ -1,7 +1,19 @@
 const Activity = require("../Models/ActivityModel");
 const RegisterForm = require("../Models/RegisterFormModel");
+const FeedbackForm = require("../Models/FeedbackFormModel");
 const Response = require("../Models/ResponseModel");
 const Session = require("../Models/SessionModel");
+const User = require("../Models/UserModel");
+
+const formatDate = (date) => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const d = new Date(date);
+    const dd = d.getDate();
+    const mmm = months[d.getMonth()];
+    const yyyy = d.getFullYear();
+    return `${dd} ${mmm} ${yyyy}`;
+}
 
 // create activity
 module.exports.createActivity = async (req, res) => {
@@ -71,7 +83,21 @@ module.exports.deleteActivity = async (req, res) => {
         const deletedActivity = await Activity.findByIdAndDelete(id);
         await RegisterForm.findByIdAndDelete(deletedActivity.registerForm);
         await Response.deleteMany({ regFormId: deletedActivity.registerForm});
-        await Session.deleteMany({ activityId: id });
+
+        // delete future sessions and feedback forms that are associated with the activity
+        const sessions = await Session.find({ activityId: id}).exec();
+        const sessionsToDeleteId = sessions.filter(session => {
+            return new Date(session.sessionDate) > new Date()
+        }).map(session => session._id);
+        
+        await Session.deleteMany({ _id: { $in: sessionsToDeleteId }});
+        await FeedbackForm.deleteMany({ sessionId: { $in: sessionsToDeleteId }});
+        await Activity.updateMany({}, {
+            $pull: { sessions: { $in: sessionsToDeleteId } }
+        });
+        await User.updateMany({}, {
+            $pull: { sessions: { $in: sessionsToDeleteId } }
+        });
 
         res.status(200).json({
             success: true,
@@ -82,6 +108,7 @@ module.exports.deleteActivity = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Activity is not deleted",
+            error: err.message,
         })
     }
 };
@@ -89,24 +116,50 @@ module.exports.deleteActivity = async (req, res) => {
 // update activity
 module.exports.updateActivity = async (req, res) => {
     const { id } = req.params;
-    const { title, scheduleDays, scheduleTime, location, capacity } = req.body;
 
     try {
         const updatedActivity = await Activity.findByIdAndUpdate(id, {
             $set: req.body,
         }, { new: true });
 
-        const dayNumbers = scheduleDays.map(day => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].indexOf(day));
+        await RegisterForm.findByIdAndUpdate(updatedActivity.registerForm, {
+            $set: { description: "Volunteer Registration Form for " + updatedActivity.title}
+        }, { new: true });
+
+
+        const dayNumbers = updatedActivity.scheduleDays.map(day => 
+            ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].indexOf(day)
+        );
         
-        const sessionsToDelete = await Session.find({ activityId: id}).lean().exec();
-        const sessionsToDeleteIds = sessionsToDelete.filter(session => {
-            const sessionDay = session.sessionDate.getDay();
-            const sessionSize = session.volunteers.length;
-            // check if session day is not in scheduleDays and session size is greater than capacity
-            return !dayNumbers.includes(sessionDay) && sessionSize > capacity;
+        // delete future sessions and feedback forms that are not in scheduleDays or have more volunteers than capacity
+        const sessions = await Session.find({_id: { $in: updatedActivity.sessions }}).exec();
+
+        const sessionsToDeleteIds = sessions.filter(s => {
+            const d = new Date(s.sessionDate);
+            return d > new Date() || 
+                !dayNumbers.includes(d.getDay()) || 
+                s.volunteers.length > updatedActivity.capacity
         }).map(session => session._id);
 
+        const sessionDatesToDelete = sessions.filter(s => {
+            const d = new Date(s.sessionDate);
+            return d > new Date() || 
+                !dayNumbers.includes(d.getDay()) || 
+                s.volunteers.length > updatedActivity.capacity
+        }).map(session => session.sessionDate);
+
         await Session.deleteMany({ _id: { $in: sessionsToDeleteIds }});
+        await FeedbackForm.deleteMany({ sessionId: { $in: sessionsToDeleteIds }});
+        await RegisterForm.findByIdAndUpdate(updatedActivity.registerForm, { 
+            $pull: { sessionDates: { $in: sessionDatesToDelete } }
+        }, { new: true });
+        await Response.deleteMany({ regFormId: updatedActivity.registerForm });
+        await Activity.updateMany({}, {
+            $pull: { sessions: { $in: sessionsToDeleteIds } }
+        });
+        await User.updateMany({}, {
+            $pull: { sessions: { $in: sessionsToDeleteIds } }
+        });
 
         res.status(200).json({
             success: true,
@@ -117,6 +170,7 @@ module.exports.updateActivity = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Activity is not updated",
+            error: err.message,
         })
     }
 };
@@ -150,6 +204,7 @@ module.exports.getActivities = async (req, res, next) => {
             success: true,
             message: "All Activities are found",
             data: activities,
+            count: activities.length,
         });
     } catch (err) {
         res.status(500).json({
