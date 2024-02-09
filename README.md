@@ -1,7 +1,7 @@
 # DSC_H4G
 
 ## Problem Statement
-Develop and implement a robust and reliable system to accurately track and measure the number of people impacted by volunteering efforts, as well as assess the depth and nature of this impact
+Pillar 1 (Ground-Up Initiative): Develop and implement a robust and reliable system to accurately track and measure the number of people impacted by volunteering efforts, as well as assess the depth and nature of this impact
 
 <insert image of application>
 
@@ -28,6 +28,7 @@ Before running the application, make sure you have the following installed:
 
 ### Installation
 1. Clone the repository
+
 `git clone https://github.com/inezkok/DSC_H4G.git`
 
 2. Go to the project directory and install dependencies for both the client and server
