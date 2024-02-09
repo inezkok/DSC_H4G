@@ -1,10 +1,10 @@
 const router = require("express").Router();
 const { createFeedbackResponse, createRegisterResponse, deleteResponse, updateResponse, getResponse, getAllResponses, getAllResponsesForFeedbackForm, getAllResponsesForRegisterForm } = require("../Controllers/ResponseController");
 
-// create feedback response
+// create feedback response (NOTE FEEDBACK FORM ID IS SPECIFIC TO THE SESSION)
 router.route("/feedback-form/:feedbackFormId/:userId").post(createFeedbackResponse);
 
-// create register response
+// create register response (NOTE REGISTER FORM ID IS SPECIFIC TO THE ACTIVITY)
 router.route("/register-form/:regFormId/:userId").post(createRegisterResponse);
 
 // delete response
@@ -23,6 +23,6 @@ router.get("/", getAllResponses);
 router.route("/feedback-form/:feedbackFormId").get(getAllResponsesForFeedbackForm);
 
 // get all responses for register form
-router.route("/register-form/:registerFormId").get(getAllResponsesForRegisterForm);
+router.route("/register-form/:regFormId").get(getAllResponsesForRegisterForm);
 
 module.exports = router;
