@@ -1,6 +1,7 @@
 const Session = require("../Models/SessionModel");
 const Activity = require("../Models/ActivityModel");
 const FeedbackForm = require("../Models/FeedbackFormModel");
+const RegisterForm = require("../Models/RegisterFormModel");
 const Response = require("../Models/ResponseModel");
 const User = require("../Models/UserModel");
 
@@ -87,6 +88,7 @@ module.exports.deleteSession = async (req, res) => {
 
     try {
         const deletedSession = await Session.findByIdAndDelete(id);
+        await RegisterForm.updateMany({ $pull: { sessionDates: deletedSession.sessionDate } });
         await Activity.updateMany({ $pull: { sessions: deletedSession._id } });
         await FeedbackForm.findByIdAndDelete(deletedSession.feedbackForm);
         await Response.deleteMany({ feedbackFormId: deletedSession.feedbackForm });
