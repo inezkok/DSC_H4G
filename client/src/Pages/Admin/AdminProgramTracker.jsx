@@ -100,13 +100,11 @@ const AdminProgramTracker = () => {
 
   const handleDeleteActivity = (activity) => { 
     if (window.confirm(`Are you sure you want to delete ${activity.title}?`)) {
-      alert(`Delete ${activity.tite}`);
       deleteActivity(activity);
     }
   }
 
   const handleClickActivity = (activity) => {
-    console.log(activity);
     alert(`Click ${activity.title}`);
   }
 

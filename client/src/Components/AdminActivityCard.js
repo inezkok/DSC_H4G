@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { ButtonBase, Box, Card, CardContent, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import PlaceIcon from '@mui/icons-material/Place';
+import PeopleIcon from '@mui/icons-material/People';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -75,7 +77,7 @@ export default function AdminActivityCard({ activity, handleEditActivity, handle
             </Menu>
 
             <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, fontSize: 16 }}>
-                <AccessTimeFilledIcon sx={{mr: 0.4}} />
+                <CalendarTodayIcon sx={{mr: 0.4}} />
                 <Typography sx={{maxWidth: 300}}>{activity.scheduleDays.map(day => day.substring(0, 3)).join(', ')}</Typography>
             </Box>
 
@@ -90,6 +92,11 @@ export default function AdminActivityCard({ activity, handleEditActivity, handle
                     {activity.location.substring(0, 60)}
                     {activity.location.length > 60 && '...'}
                 </Typography>
+            </Box>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, fontSize: 16 }}>
+                <PeopleIcon sx={{mr: 0.4}} />
+                <Typography sx={{maxWidth: 300}}>{activity.capacity}</Typography>
             </Box>
         </CardContent>
     </Card>
