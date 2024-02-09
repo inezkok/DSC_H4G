@@ -52,11 +52,6 @@ const AdminHome = () => {
       <div className='admin_home_page'>
       <NavBar />
       <Container>
-        <AdminCardComponent />
-        <AdminCardComponent />
-      </Container>
-      
-      <Container>
         <h5>Dashboard</h5>
         <AdminCardComponent />
         <AdminCardComponent />
