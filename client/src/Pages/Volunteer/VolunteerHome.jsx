@@ -5,6 +5,9 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import NavBar from "../../Components/Navbar";
 import "../../Styles/VolunteerHome.css"
+import ActivityCardComponent from "../../Components/ActivityCard";
+import { Container } from "@mui/material";
+
 
 const VolunteerHome = () => {
   const navigate = useNavigate();
@@ -47,8 +50,26 @@ const VolunteerHome = () => {
     <>
       <div className="volunteer_home_page">
         <NavBar />
-        <h1>Volunteer Home Page</h1>
-        <h2>Welcome <span>{username}</span></h2>
+        <Container>
+          Your upcoming session
+        </Container>
+        <Container>
+          <ActivityCardComponent />
+          <ActivityCardComponent />
+          <ActivityCardComponent />
+        </Container>
+        <Container>
+          Sign up for more volunteering sessions
+        </Container>
+        <Container>
+          <ActivityCardComponent />
+          <ActivityCardComponent />
+          <ActivityCardComponent />
+        </Container>
+        <Container>
+          <ActivityCardComponent />
+          <ActivityCardComponent />
+        </Container>
       </div>
       <ToastContainer />
     </>
