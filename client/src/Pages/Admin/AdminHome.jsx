@@ -5,9 +5,9 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import NavBar from "../../Components/Navbar";
 import "../../Styles/AdminHome.css";
-import Card from "../../Components/Card";
-// import OutlinedCard from "../../Components/Card";
-
+import AdminCardComponent from "../../Components/AdminCard";
+import StatsCardComponent from "../../Components/StatisticCard";
+import { Container } from "@mui/material"
 
 
 const AdminHome = () => {
@@ -51,7 +51,21 @@ const AdminHome = () => {
     <>
       <div className='admin_home_page'>
       <NavBar />
-      <Card />
+      <Container>
+        <AdminCardComponent />
+        <AdminCardComponent />
+      </Container>
+      
+      <Container>
+        <h5>Dashboard</h5>
+        <AdminCardComponent />
+        <AdminCardComponent />
+        <AdminCardComponent />
+      </Container>
+      
+      <Container>
+        <StatsCardComponent/>
+      </Container>
       </div>
       <ToastContainer />
     </>
