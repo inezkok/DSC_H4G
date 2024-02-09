@@ -23,6 +23,7 @@ body {
   align-items: center;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   background-image: linear-gradient(rgba(255,255,255,0.55), rgba(255,255,255,0.55)), url("https://patron.groundupinitiative.org/wp-content/uploads/2020/11/hero-image.jpg");
+  background-attachment: fixed;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
