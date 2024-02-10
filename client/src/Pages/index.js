@@ -13,3 +13,4 @@ export {default as AdminEditActivity} from './Admin/AdminEditActivity'
 export {default as AdminProgramTracker} from './Admin/AdminProgramTracker'
 
 export {default as VolunteerRegForm} from './Volunteer/VolunteerRegForm'
+export {default as AdminSessionCapacity} from './Admin/AdminSessionCapacity'

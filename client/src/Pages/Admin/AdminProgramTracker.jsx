@@ -66,7 +66,6 @@ const AdminProgramTracker = () => {
         .catch((error) => {
           console.log(error);
           setLoading(true);
-          console.log("error");
         });
     }
   }, [navigate, activities, loading, username,]);
@@ -94,7 +93,6 @@ const AdminProgramTracker = () => {
             .catch((error) => {
                 console.log(error);
                 setLoading(true);
-                console.log("error");
             });
     }
   }, [loading, sessionType, hasSessionTypeChange]);
@@ -146,6 +144,10 @@ const AdminProgramTracker = () => {
     alert(`Navigate to feedback form ${session.feedbackForm}`);
   }
 
+  const handleClickCapacity = (session) => { 
+    navigate(`/admin/programtracker/session/${session._id}`);
+  }
+
   const handleChange = (e) => {
     setSessionType(e.target.value);
     setHasSessionTypeChange(true);
@@ -177,9 +179,10 @@ const AdminProgramTracker = () => {
                 .sort((a, b) => new Date(a.sessionDate) - new Date(b.sessionDate))
                 .map((session, index) => (
                     <AdminSessionCard 
-                        key={session._id}
+                        key={index}
                         session={session}
                         handleClickSession = {handleClickSession}
+                        handleClickCapacity={handleClickCapacity}
                     />
                     ))
               }

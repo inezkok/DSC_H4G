@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ButtonBase, Box, Card, CardContent, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import PlaceIcon from '@mui/icons-material/Place';
@@ -17,23 +17,28 @@ const formatDate = (date) => {
     return `${dd} ${mmm} ${yyyy}`;
 }
 
-export default function AdminSessionCard({ session, handleClickSession }) {
+export default function AdminSessionCard({ session, handleClickSession, handleClickCapacity }) {
     const [loading, setLoading] = useState(true);
     const [activity, setActivity] = useState({});
 
-    React.useEffect(() => {
+    useEffect(() => {
+        console.log("Session card: ", session);
+
         if (session) {
             axios.get(`http://localhost:4000/activities/${session.activityId}`)
                 .then((response) => {
-                    setActivity(response.data.data);
-                    setLoading(false);
+                    console.log(response.data.data)
+                    if (response.data.succcess && response.data.data) {
+                        setActivity(response.data.data);
+                        setLoading(false);
+                    }
                 })
                 .catch((error) => {
                     console.log(error);
                     setLoading(true);
                 });
         }
-    }, [session]);
+    }, [session, activity, loading]);
 
     return loading ? (
         <p>Loading...</p>
@@ -66,10 +71,12 @@ export default function AdminSessionCard({ session, handleClickSession }) {
                     </Typography>
                 </Box>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, fontSize: 16 }}>
-                    <PeopleIcon sx={{mr: 0.4}} />
-                    <Typography sx={{maxWidth: 300}}>{session.volunteers.length}</Typography>
-                </Box>
+                <ButtonBase onClick={() => handleClickCapacity(session)}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, fontSize: 16 }}>
+                        <PeopleIcon sx={{mr: 0.4}} />
+                        <Typography sx={{maxWidth: 300}}>{session.volunteers.length}</Typography>
+                    </Box>
+                </ButtonBase>
             </CardContent>
         </Card>
     );
