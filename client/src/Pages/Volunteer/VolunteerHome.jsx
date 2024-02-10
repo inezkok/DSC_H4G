@@ -13,7 +13,6 @@ const VolunteerHome = () => {
   const navigate = useNavigate();
   const [cookies, removeCookie] = useCookies([]);
   const [username, setUsername] = useState("");
-  const [sessions, setSessions] = useState("");
   const [role, setRole] = useState("");
 
   useEffect(() => {
@@ -33,8 +32,7 @@ const VolunteerHome = () => {
 
       setUsername(user.username);
       setRole(user.role);
-      setSessions(user.sessions);
-
+      
       console.log(data);
 
       return status && user.role === "Volunteer"
@@ -46,32 +44,12 @@ const VolunteerHome = () => {
     };
 
     verifyCookie();
-  }, [cookies, navigate, removeCookie, role, username, sessions]);
+  }, [cookies, navigate, removeCookie, role, username]);
 
   return (
     <>
       <div className="volunteer_home_page">
         <NavBar />
-        <Container>
-          Your upcoming session
-        </Container>
-        <Container>
-          <ActivityCardComponent props={sessions[0]}/>
-          <ActivityCardComponent props={sessions[1]}/>
-          <ActivityCardComponent props={sessions[2]}/>
-        </Container>
-        <Container>
-          Sign up for more volunteering sessions
-        </Container>
-        <Container>
-          <ActivityCardComponent />
-          <ActivityCardComponent />
-          <ActivityCardComponent />
-        </Container>
-        <Container>
-          <ActivityCardComponent />
-          <ActivityCardComponent />
-        </Container>
       </div>
       <ToastContainer />
     </>
