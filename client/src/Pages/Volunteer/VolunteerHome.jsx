@@ -5,8 +5,6 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import NavBar from "../../Components/Navbar";
 import "../../Styles/VolunteerHome.css"
-import ActivityCardComponent from "../../Components/ActivityCard";
-import { Container } from "@mui/material";
 
 
 const VolunteerHome = () => {
@@ -32,7 +30,7 @@ const VolunteerHome = () => {
 
       setUsername(user.username);
       setRole(user.role);
-
+      
       console.log(data);
 
       return status && user.role === "Volunteer"
@@ -50,26 +48,6 @@ const VolunteerHome = () => {
     <>
       <div className="volunteer_home_page">
         <NavBar />
-        <Container>
-          Your upcoming session
-        </Container>
-        <Container>
-          <ActivityCardComponent />
-          <ActivityCardComponent />
-          <ActivityCardComponent />
-        </Container>
-        <Container>
-          Sign up for more volunteering sessions
-        </Container>
-        <Container>
-          <ActivityCardComponent />
-          <ActivityCardComponent />
-          <ActivityCardComponent />
-        </Container>
-        <Container>
-          <ActivityCardComponent />
-          <ActivityCardComponent />
-        </Container>
       </div>
       <ToastContainer />
     </>
