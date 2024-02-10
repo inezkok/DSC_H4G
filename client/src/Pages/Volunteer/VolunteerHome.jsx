@@ -5,8 +5,6 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import NavBar from "../../Components/Navbar";
 import "../../Styles/VolunteerHome.css"
-import ActivityCardComponent from "../../Components/ActivityCard";
-import { Container } from "@mui/material";
 
 
 const VolunteerHome = () => {
