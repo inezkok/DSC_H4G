@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { Box } from '@mui/material';
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import NavBar from "../../Components/Navbar";
 import "../../Styles/AdminProgramTracker.css";
+import AdminResponseCard from "../../Components/AdminResponseCard";
 
 const AdminViewRegResponses = () => {
   const navigate = useNavigate();
@@ -13,9 +15,9 @@ const AdminViewRegResponses = () => {
   const [userId, setUserId] = useState("");
   const [role, setRole] = useState("");
 
-  const { activityId } = useParams();
+  const { regFormId } = useParams(); // regformid
   const [activityTitle, setActivityTitle] = useState("");
-  const [regFormId, setRegFormId] = useState('');
+  const [activityId, setActivityId] = useState('');
   const [responses, setResponses] = useState([]);
 
   const [loading, setLoading] = useState(false);
@@ -47,32 +49,27 @@ const AdminViewRegResponses = () => {
     };
 
     verifyCookie();
-  }, [cookies, navigate, removeCookie, role, username]);
+  }, [cookies, navigate, removeCookie, role, username, activityId, userId]);
 
   
-
-    // get selected activity
-    useEffect(() => {
-    
-        if (loading && username !== "") {
-          axios.get(`http://localhost:4000/activities`, { withCredentials: true })
-            .then((response) => {
-              const selectedActivity = response.data.data.find(activity => activity._id === activityId);
-              setActivityTitle(selectedActivity.title);
-              setLoading(false);
-              console.log(activityTitle);
-            })
-            .catch((error) => {
-              console.log(error);
-              setLoading(true);
-              console.log("error");
-            });
-        }
-      }, [navigate, loading, username, activityId,]);
-
   // get all responses
   useEffect(() => {
     console.log('Responses: ', responses);
+
+    const getActivity = async () => {
+        if (regFormId !== "") {
+            try {
+                const regForm = await axios.get(`http://localhost:4000/register-form/${regFormId}`, { withCredentials: true });
+                console.log('description: ' + regForm.description);
+
+                setActivityId(regForm.activityId);
+                const activity = await axios.get(`http://localhost:4000/activities/${activityId}`, { withCredentials: true });
+                setActivityTitle(activity.title);
+            } catch (error) {
+                console.error('getItinerary error:', error);
+            }
+        }
+    }
 
     if (loading && regFormId !== "") {
       axios.get(`http://localhost:4000/response/register-form/${regFormId}`, { withCredentials: true })
@@ -86,6 +83,7 @@ const AdminViewRegResponses = () => {
           console.log("error");
         });
     }
+    getActivity();
   }, [navigate, responses, loading, regFormId]);
 
   const handleError = (message) => {
@@ -108,9 +106,16 @@ const AdminViewRegResponses = () => {
                 <h2>{activityTitle}</h2>
             </div>
 
-            
+            <Box className="programs">
+              {responses.map((response, index) => (
+                    <AdminResponseCard 
+                        key={response._id}
+                        response={response}
+                    />
+                    ))
+              }
+            </Box>
 
-            
         </div>
         
       </div>

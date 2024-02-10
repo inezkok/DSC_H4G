@@ -7,14 +7,6 @@ import { ToastContainer, toast } from "react-toastify";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import ListItemText from '@mui/material/ListItemText';
-import Select from '@mui/material/Select';
-import Checkbox from '@mui/material/Checkbox';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import NavBar from "../../Components/Navbar";
@@ -98,7 +90,7 @@ const VolunteerRegForm = () => {
 
         verifyCookie();
         getActivity();
-      }, [cookies, navigate, removeCookie, role, username]);
+      }, [cookies, navigate, removeCookie, role, username, activityId, userId]);
 
     const handleError = (err) => {
         toast.error(err, {

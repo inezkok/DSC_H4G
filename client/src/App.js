@@ -11,7 +11,7 @@ function App() {
         <Route path="/admin/home" element={<AdminHome />} />
         <Route path="/admin/programtracker" element={<AdminProgramTracker />} />
         <Route path="/admin/activities/create" element={<AdminCreateActivity />} />
-        <Route path="/admin/activities/:activityId" element={<AdminViewRegResponses />} />
+        <Route path="/admin/activities/:regFormId" element={<AdminViewRegResponses />} />
         <Route path="/volunteer/home" element={<VolunteerHome />} />
         <Route path="/volunteer/register/:activityId" element={<VolunteerRegForm />} />
         <Route path="/profile" element={<Profile />} />
