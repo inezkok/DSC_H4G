@@ -3,86 +3,104 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import NavBar from "../../Components/Navbar";
-import "../../Styles/VolunteerHome.css"
-import ActivityCardComponent from "../../Components/ActivityCard";
-import { Container } from "@mui/material";
+import "../../Styles/VolunteerHistory.css"
+import { Box } from "@mui/material";
+import VolunteerSessionFeedbackCard from "../../Components/VolunteerSessionFeedbackCard";
+import { ToastContainer, toast } from "react-toastify";
 
 const VolunteerHistory = () => {
-    const navigate = useNavigate();
-    const [cookies, removeCookie] = useCookies([]);
-    const [username, setUsername] = useState("");
-    const [role, setRole] = useState("");
-    const [sessions, setSessions] = useState([]);
-    const [email, setEmail] = useState("");
-    const [pastSessions, setPastSessions] = useState([]);
-    const {activities, setActivities} = useState([]);
+  const navigate = useNavigate();
+  const [cookies, removeCookie] = useCookies([]);
+  const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState("");
+  const [role, setRole] = useState("");
 
-    useEffect(() => {
-      const verifyCookie = async () => {
-        if (!cookies.token) {
-          navigate("/login");
-        }
-  
-        const {data1} = await axios.post("http://localhost:4000", {}, { withCredentials: true });
-        const {status, user} = data1;
-  
-        if (!user) {
-          removeCookie("token");
-          navigate("/login");
-          return;
-        }
-  
-        setUsername(user.username);
-        setRole(user.role);
-        setEmail(user.email);
-        setSessions(user.sessions);
-  
-        console.log(data);
-  
-        if (!status && user.role !== "Volunteer") {
-            removeCookie("token"), navigate("/login");
-        }
+  const [pastSessions, setPastSessions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-        for (let i = 0; i < sessions.length(); i++) {
-            if (sessions[i].sessionDate < new Date()) {
-                setPastSessions(pastSessions.push(sessions[i]));
-            }
-        }
+  useEffect(() => {
+    const verifyCookie = async () => {
+      if (!cookies.token) {
+        navigate("/login");
+      }
 
-        for (let j = 0; j < pastSessions.length(); j++) {
-            const {data3} = await axios.get("http://localhost:4000/activities/" + pastSessions[j].activityId, {}, { withCredentials: true });
-            if (data3.status) {
-                setActivities(activities.push(data3.data));
-            }
-        }   
-      };
-  
+      const {data} = await axios.post("http://localhost:4000", {}, { withCredentials: true });
+      const {status, user} = data;
+
+      if (!user) {
+        removeCookie("token");
+        navigate("/login");
+        return;
+      }
+
+      setUsername(user.username);
+      setRole(user.role);
+      setUserId(user.id);
+
+      console.log(data);
+
+      return status && user.role === "Volunteer"
+        ? toast(`Hello ${user.username}`, {
+            position: "top-right",
+            toastId: 'stop welcome duplication'
+          })
+        : (removeCookie("token"), navigate("/login"));
+    };
+
     verifyCookie();
+  }, [cookies, navigate, removeCookie, role, username]);
 
-    }, [cookies, navigate, removeCookie, role, username, email, userId, sessions]);
+  // get past sessions
+  useEffect(() => {
+    if (loading && userId !== "") {
+      axios.get(`http://localhost:4000/session/volunteer/${userId}`, { withCredentials: true })
+        .then((response) => {
+          const oldSessions = response.data.data.filter((session) => new Date(session.sessionDate) < new Date());
+          setPastSessions(oldSessions);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log("Error: ", error);
+          setLoading(false);
+        });
+      }
+  }, [userId, loading, pastSessions]);
 
-    return (
-        <>
-          <div className="volunteer_home_page">
-            <NavBar />
-            <Container>
-              Your past sessions:
-            </Container>
-            <Container>
-            {(() => {
-              for (let i = 0; i < pastSessions.length(); i++) {
-                  <ActivityCardComponent 
-                  key={pastSessions[i]._id}
-                  pastSessions={pastSessions[i]}
-                  activities = {activities[i]}
-                  />
-                }
-              })()
-            }
-            </Container>
-          </div>
-        </>
-      )
+  const handleClickReview = (session, reviewedStatus) => {
+    if (reviewedStatus) {
+      toast("You have already reviewed this session", {
+        position: "top-right",
+        toastId: 'stop duplicate review'
+      });
+    } else {
+      navigate(`/volunteer/feedback/${session.feedbackForm}`);
     }
-    
-    export default VolunteerHistory
+  }
+
+  return (
+    <>
+      <div className="volunteer_history_page">
+        <NavBar />
+
+        <h3>Your past volunteering sessions</h3>
+
+        <Box className="sessions" sx={{display: 'flex', flexDirection: 'column', flexWrap: 'wrap', m: 2}}>
+          {pastSessions
+            .sort((a, b) => new Date(b.sessionDate) - new Date(a.sessionDate))
+            .map((session, index) => (
+              <VolunteerSessionFeedbackCard 
+                key={index} 
+                session={session} 
+                userId={userId} 
+                handleClickReview={handleClickReview}
+              />
+          ))}
+        </Box>
+      </div>
+
+      <ToastContainer />
+    </>
+  )
+}
+
+export default VolunteerHistory

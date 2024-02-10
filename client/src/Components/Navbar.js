@@ -83,7 +83,7 @@ export default function NavBar() {
         break;
       case "Volunteering History":
         // navigate to page
-        alert("Volunteering History");
+        if (role === "Volunteer") navigate("/volunteer/history");
         break;
 
       default:
