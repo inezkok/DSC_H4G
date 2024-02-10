@@ -14,17 +14,17 @@ const VolunteerHistory = () => {
     const [role, setRole] = useState("");
     const [sessions, setSessions] = useState([]);
     const [email, setEmail] = useState("");
-    const [userId, setUserId] = useState("");
     const [pastSessions, setPastSessions] = useState([]);
-  
+    const {activities, setActivities} = useState([]);
+
     useEffect(() => {
       const verifyCookie = async () => {
         if (!cookies.token) {
           navigate("/login");
         }
   
-        const {data} = await axios.post("http://localhost:4000", {}, { withCredentials: true });
-        const {status, user} = data;
+        const {data1} = await axios.post("http://localhost:4000", {}, { withCredentials: true });
+        const {status, user} = data1;
   
         if (!user) {
           removeCookie("token");
@@ -35,6 +35,7 @@ const VolunteerHistory = () => {
         setUsername(user.username);
         setRole(user.role);
         setEmail(user.email);
+        setSessions(user.sessions);
   
         console.log(data);
   
@@ -42,32 +43,21 @@ const VolunteerHistory = () => {
             removeCookie("token"), navigate("/login");
         }
 
-      };
-  
-    const getUser = async () => {
-        if (userId === "" && email !== "") {
-            try {
-                if (data.data) {
-                    setUserId(await data.data.find(user => user.email === email)._id);
-                }
-            } catch (error) {
-                console.error('getUser error:', error);
-            }
-        }
-    }
-
-    const {data} = await.get(`http://localhost:4000/session/volunteer/${userId}`, {}, { withCredentials: true });
-    if (data.status) {
-        setSessions(data.data); 
         for (let i = 0; i < sessions.length(); i++) {
             if (sessions[i].sessionDate < new Date()) {
                 setPastSessions(pastSessions.push(sessions[i]));
             }
-        }   
-    }
+        }
 
+        for (let j = 0; j < pastSessions.length(); j++) {
+            const {data3} = await axios.get("http://localhost:4000/activities/" + pastSessions[j].activityId, {}, { withCredentials: true });
+            if (data3.status) {
+                setActivities(activities.push(data3.data));
+            }
+        }   
+      };
+  
     verifyCookie();
-    getUser();
 
     }, [cookies, navigate, removeCookie, role, username, email, userId, sessions]);
 
@@ -79,12 +69,16 @@ const VolunteerHistory = () => {
               Your past sessions:
             </Container>
             <Container>
-            {pastSessions.map((pastSessions) => (
-                <ActivityCardComponent 
-                key={pastSessions._id}
-                pastSessions={pastSessions}
-                />
-            ))}
+            {(() => {
+              for (let i = 0; i < pastSessions.length(); i++) {
+                  <ActivityCardComponent 
+                  key={pastSessions[i]._id}
+                  pastSessions={pastSessions[i]}
+                  activities = {activities[i]}
+                  />
+                }
+              })()
+            }
             </Container>
           </div>
         </>

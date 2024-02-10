@@ -4,27 +4,29 @@ import { useCookies } from "react-cookie";
 import axios from "axios";
 import NavBar from "../../Components/Navbar";
 import "../../Styles/VolunteerHome.css"
-import ActivityCardComponent from "../../Components/ActivityCard";
-import { Container } from "@mui/material";
 
-const VolunteerFeedback = (session) => {
+const VolunteerFeedback = (session, activity) => {
     const navigate = useNavigate();
     const [cookies, removeCookie] = useCookies([]);
     const [username, setUsername] = useState("");
     const [role, setRole] = useState("");
-    const [sessions, setSessions] = useState([]);
     const [email, setEmail] = useState("");
-    const [userId, setUserId] = useState("");
-    const [pastSessions, setPastSessions] = useState([]);
+    const [answer1, setAnswer1] = useState("");
+    const [answer2, setAnswer2] = useState("");
   
+    const [questions, setQuestions] = useState([
+        "On a scale of 1 to 5, how much of an impact do you feel this volunteer work had on you.",
+        "Explain your above answer."
+    ]);
+
     useEffect(() => {
       const verifyCookie = async () => {
         if (!cookies.token) {
           navigate("/login");
         }
   
-        const {data} = await axios.post("http://localhost:4000", {}, { withCredentials: true });
-        const {status, user} = data;
+        const {data1} = await axios.post("http://localhost:4000", {}, { withCredentials: true });
+        const {status, user} = data1;
   
         if (!user) {
           removeCookie("token");
@@ -43,65 +45,98 @@ const VolunteerFeedback = (session) => {
         }
 
       };
-  
-    const getUser = async () => {
-        if (userId === "" && email !== "") {
-            try {
-                if (data.data) {
-                    setUserId(await data.data.find(user => user.email === email)._id);
-                }
-            } catch (error) {
-                console.error('getUser error:', error);
-            }
-        }
-    }
-
-    const {data} = await.get(`http://localhost:4000/session/volunteer/${userId}`, {}, { withCredentials: true });
-    if (data.status) {
-        setSessions(data.data); 
-        for (let i = 0; i < sessions.length(); i++) {
-            if (sessions[i].sessionDate < new Date()) {
-                setPastSessions(pastSessions.push(sessions[i]));
-            }
-        }   
-    }
 
     verifyCookie();
-    getUser();
 
     }, [cookies, navigate, removeCookie, role, username, email, userId, sessions]);
 
+    const handleSave = async () => {
+        const data = {
+            answers: [{
+                questionId: questions[0],
+                optionId: answer1
+            }, {
+                questionId: questions[1],
+                optionId: answer2
+            }]
+        };
+
+        try {
+            if (answer1 === "" || answer2 === "") {
+                handleError("Please fill out all fields");
+                return;
+            }
+
+            const res = await axios.put(`http://localhost:4000/response/feedback-form/${id}`, { username, email }, { withCredentials: true });
+
+            if (res.data.success) {
+                handleSuccess("Feedback submitted successfully");
+                setTimeout(() => {
+                    navigate('/volunteer/home');
+                }, 3000);
+                return;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+
+        e.target.reset();
+    }
+
+    const handleCancel = () => {
+        navigate('/volunteer/home');
+    }
+
+    const handleSuccess = (msg) => {
+        toast.success(msg, {
+            position: "bottom-left",
+            autoClose: 5000,
+        });
+    }
+
+    const handleError = (err) => {
+        toast.error(err, {
+            position: "bottom-left",
+        });
+    }
+
     return (
         <>
-          <div className="volunteer_home_page">
+          <div>
             <NavBar />
             <form onSubmit={handleSave} onReset={handleCancel}>
                     
                     <div>
                         <div>
                             <h1>Feedback Form</h1>
-                            <h2>For {session.title} </h2>
+                            <h2>For {activity.title}, on {session.sessionDate} </h2>
                         </div>
 
-                        <div className="profile_body">
-                            <div className="profile_info_container">
-                                <label htmlFor="username">Username</label>
-                                <input type="text" placeholder={username} value={username} onChange={(e) => setUsername(e.target.value)} />
+                        <div>
+                            <div>
+                                <label htmlFor="answer1">{questions[0]}</label> <br></br>
+                                <select id="answer1" name="answer1" value={answer1} onChange={(e) => setAnswer1(e.target.value)}>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
                             </div>
 
-                            <div className="profile_info_container">
-                                <label htmlFor="email">Email</label>
-                                <input type="text" placeholder={email} value={email} onChange={(e) => setEmail(e.target.value)} />
+                            <div>
+                                <label htmlFor="answer2">{questions[1]}</label>
+                                <input type="text" placeholder="input reason" value={answer2} onChange={(e) => setAnswer2(e.target.value)} />
                             </div>
                         </div>
 
-                        <div className="profile_buttons">
-                            <button type="button" className='profile_password_button' onClick={handleChangePassword}>Change password?</button>
-                            <button type="submit" className="profile_save_button">Save Changes</button>
-                            <button type="reset" className="profile_cancel_button">Cancel Changes</button>
+                        <div>
+                            <button type="submit">Submit Feedback</button>
+                            <button type="reset">Cancel</button>
                         </div>
                     </div>
                 </form>
+                <ToastContainer/>
           </div>
         </>
       )
