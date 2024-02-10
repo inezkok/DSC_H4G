@@ -6,7 +6,6 @@ import '../../Styles/AdminCreateActivity.css';
 import { ToastContainer, toast } from "react-toastify";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -24,7 +23,7 @@ const AdminCreateActivity = () => {
     const [cookies, removeCookie] = useCookies([]);
     const [username, setUsername] = useState("");
     const [role, setRole] = useState("");
-    
+
     const [title, setTitle] = useState('');
     const [scheduleDays, setScheduleDays] = useState([]);
     const [scheduleTime, setScheduleTime] = useState('');
@@ -65,21 +64,21 @@ const AdminCreateActivity = () => {
           if (!cookies.token) {
             navigate("/login");
           }
-    
+
           const {data} = await axios.post("http://localhost:4000", {}, { withCredentials: true });
           const {status, user} = data;
-    
+
           if (!user) {
             removeCookie("token");
             navigate("/login");
             return;
           }
-    
+
           setUsername(user.username);
           setRole(user.role);
-    
+
           console.log(data);
-    
+
           return status && user.role === "Admin"
             ? toast(`Hello ${user.username}`, {
                 position: "top-right",
@@ -131,7 +130,7 @@ const AdminCreateActivity = () => {
                 setLoading(false);
                 handleSuccess('Activity created successfully');
                 setTimeout(() => {
-                    navigate('/admin/home');
+                    navigate('/admin/programtracker');
                 }, 3000);
             }
         } catch (error) {
@@ -207,7 +206,7 @@ const AdminCreateActivity = () => {
                                         setScheduleTime(newValue.format('HH:mm') + " - " + scheduleTimeEnd.format('HH:mm'))
                                     }}
                                 />
-                                
+
                                 <TimePicker
                                     label="End"
                                     value={scheduleTimeEnd}
@@ -218,7 +217,7 @@ const AdminCreateActivity = () => {
                                 />
                         </LocalizationProvider>
                     </div>
-                        
+
                     <div className="field_info_container">
                         <label htmlFor="location">Location</label>
                         <input type="text" placeholder={"Enter address"} value={location} onChange={(e) => setLocation(e.target.value)} />
