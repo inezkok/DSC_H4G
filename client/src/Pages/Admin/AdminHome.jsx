@@ -7,7 +7,7 @@ import NavBar from "../../Components/Navbar";
 import "../../Styles/AdminHome.css";
 import AdminCardComponent from "../../Components/AdminCard";
 import StatsCardComponent from "../../Components/StatisticCard";
-import { Container } from "@mui/material"
+import { Container, tableSortLabelClasses } from "@mui/material"
 
 
 const AdminHome = () => {
@@ -15,6 +15,9 @@ const AdminHome = () => {
   const [cookies, removeCookie] = useCookies([]);
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("");
+  const [totalVolunteers, setTotalVolunteers] = useState(0);
+  const [returningVolunteers, setReturningVolunteers] = useState(0);
+  const [numSessions, setNumSessions] = useState(0); 
 
   useEffect(() => {
     const verifyCookie = async () => {
@@ -44,7 +47,43 @@ const AdminHome = () => {
         : (removeCookie("token"), navigate("/login"));
     };
 
+    const getVolunteersImpact = async() => {
+      const {data} = await axios.get("http://localhost:4000/user/find/volunteer", {}, { withCredentials: true });
+      if (data.success) {
+        const allUsers = data.data;
+        setTotalVolunteers(data.count);
+        for (let i = 0; i < totalVolunteers; i++) {
+          if (allUsers[i].sessions.length > 1) {
+            setReturningVolunteers(returningVolunteers + 1);
+          }
+        }
+      } else {
+        toast("Error fetching volunteers", {
+          position: "top-right",
+        });
+      }
+    };
+
+    const getTotalSessions = async() => {
+      const {data} = await axios.get("http://localhost:4000/session/", {}, { withCredentials: true });
+      if (data.success) {
+        const allSessions = data.data;
+        for (let i = 0; i < allSessions.length; i++) {
+          if (allSessions[i].sessionDate < Date.now()) {
+            setNumSessions(numSessions + 1);
+          }
+        }
+      } else {
+        toast("Error fetching sessions", {
+          position: "top-right",
+        });
+      }
+    };
+
     verifyCookie();
+    getVolunteersImpact();
+    getTotalSessions();
+
   }, [cookies, navigate, removeCookie, role, username]);
 
   return (
@@ -53,9 +92,9 @@ const AdminHome = () => {
       <NavBar />
       <Container>
         <h5>Dashboard</h5>
-        <AdminCardComponent />
-        <AdminCardComponent />
-        <AdminCardComponent />
+        <AdminCardComponent title = {"Total Number of Volunteers"} count = {totalVolunteers}/>
+        <AdminCardComponent title = {"Number of Returning Volunteers"} count = {returningVolunteers} />
+        <AdminCardComponent title = {"Total number of Sessions"} count = {numSessions} />
       </Container>
       
       <Container>
