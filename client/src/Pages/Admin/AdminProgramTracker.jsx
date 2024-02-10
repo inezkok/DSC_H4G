@@ -79,8 +79,7 @@ const AdminProgramTracker = () => {
   }
 
   const handleEditActivity = (activity) => {
-    // navigate to edit activity page
-    alert(`Edit ${activity.title}`);
+    navigate(`/admin/activities/${activity._id}/edit`);
   }
 
   const deleteActivity = async (activity) => {
