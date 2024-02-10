@@ -7,14 +7,6 @@ import { ToastContainer, toast } from "react-toastify";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import ListItemText from '@mui/material/ListItemText';
-import Select from '@mui/material/Select';
-import Checkbox from '@mui/material/Checkbox';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import NavBar from "../../Components/Navbar";
@@ -98,7 +90,7 @@ const VolunteerRegForm = () => {
 
         verifyCookie();
         getActivity();
-      }, [cookies, navigate, removeCookie, role, username]);
+      }, [cookies, navigate, removeCookie, role, username, userId, activityId]);
 
     const handleError = (err) => {
         toast.error(err, {
@@ -198,7 +190,7 @@ const VolunteerRegForm = () => {
                     </div>
 
                     <div className="field_info_container">
-                        <label htmlFor="answer1">{questions[0]}<span>*</span></label>
+                        <h3>{questions[0]}<span>*</span></h3>
                         <select id="answer1" name="answer1" value={answer1} onChange={handleOnChange}>
                             <option value="">Select preferred communication</option>
                             <option value="Telegram">Telegram</option>
@@ -207,7 +199,7 @@ const VolunteerRegForm = () => {
                     </div>
 
                     <div className="field_info_container">
-                        <label htmlFor="answer2">{questions[1]}<span>*</span></label>
+                        <h3>{questions[1]}<span>*</span></h3>
                         <select id="answer2" name="answer2" value={answer2} onChange={handleOnChange}>
                             <option value="">Select acknowlegment</option>
                             <option value="Yes">Yes</option>
@@ -215,7 +207,7 @@ const VolunteerRegForm = () => {
                     </div>
                         
                     <div className="field_info_container">
-                        <label htmlFor="answer3">{questions[2]}<span>*</span></label>
+                        <h3>{questions[2]}<span>*</span></h3>
                         <select id="answer3" name="answer3" value={answer3} onChange={handleOnChange}>
                             <option value="">Select lunch arrangement</option>
                             <option value="Yes, please!">Yes, please!</option>
@@ -228,10 +220,13 @@ const VolunteerRegForm = () => {
                         <button onClick={handleSubmit} className="save_button">Register</button>
                         <button onClick={handleCancel} className="cancel_button">Cancel</button>
                     </div>
+
+                    <ToastContainer className="toast_container"/>
                 </div>
             )}
+
             <ToastContainer className="toast_container"/>
-        </div>
+        </div>  
     )
 };
 
