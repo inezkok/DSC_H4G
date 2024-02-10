@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { Box, Card, CardContent, Typography, Button } from '@mui/material';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import PlaceIcon from '@mui/icons-material/Place';
-import PeopleIcon from '@mui/icons-material/People';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import axios from 'axios';
 
@@ -25,7 +24,7 @@ export default function VolunteerSessionFeedbackCard({ userId, session, handleCl
 
     // get activity details of session
     useEffect(() => {
-        if (session) {
+        if (loading && session) {
             axios.get(`http://localhost:4000/activities/${session.activityId}`)
                 .then((response) => {
                     setActivity(response.data.data);
@@ -36,11 +35,13 @@ export default function VolunteerSessionFeedbackCard({ userId, session, handleCl
                     setLoading(true);
                 });
         }
-    }, [session]);
+
+        console.log(activity)
+    }, [session, activity, loading]);
 
     // check if volunteer has already reviewed the session
     useEffect(() => {
-        if (session && userId && session.feedbackForm) {
+        if (loading && session && userId && session.feedbackForm) {
             axios.get("http://localhost:4000/response")
                 .then((res) => {
                     const responses = res.data.data;
@@ -50,16 +51,16 @@ export default function VolunteerSessionFeedbackCard({ userId, session, handleCl
                 })
                 .catch((error) => {
                     console.log(error);
-                    setLoading(false);
+                    setLoading(true);
                 });
         }
-    }, [session, userId, reviewedStatus]);
+    }, [session, userId, reviewedStatus, activity, loading]);
 
     if (loading) {
         return <div>Loading...</div>
     } else if (reviewedStatus) {
         return (
-            <Card sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderRadius: '1rem', maxWidth: 600, backgroundColor: "#D0E199" }}>
+            <Card sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 2, borderRadius: '1rem', maxWidth: '90%', backgroundColor: "#D0E199" }}>
                 <CardContent sx={{ display: 'flex', flexDirection: 'column', m: 2, maxWidth: 400}}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row' }}>
                         <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#000000'}}>
@@ -86,16 +87,18 @@ export default function VolunteerSessionFeedbackCard({ userId, session, handleCl
                     </Box>
                 </CardContent>
 
-                <Button sx={{bgcolor: "#FFFFFF", borderRadius: "1rem"}} onClick={() => handleClickReview(session, reviewedStatus)}>
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#000000'}}>
-                        Reviewed
-                    </Typography>
-                </Button>
+                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', m: 2}}>
+                    <Button size='medium' sx={{bgcolor: "#FFFFFF", borderRadius: "1rem",  width: 200, height: 50}} onClick={() => handleClickReview(session, reviewedStatus)}>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#000000'}}>
+                            Reviewed
+                        </Typography>
+                    </Button>
+                </Box>
             </Card>
         )
     } else {
         return (
-            <Card sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderRadius: '1rem', maxWidth: 600, backgroundColor: "#FA9654" }}>
+            <Card sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 2, borderRadius: '1rem', maxWidth: '90%', backgroundColor: "#FA9654" }}>
                 <CardContent sx={{ display: 'flex', flexDirection: 'column', m: 2, maxWidth: 400}}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row' }}>
                         <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#000000'}}>
@@ -122,11 +125,13 @@ export default function VolunteerSessionFeedbackCard({ userId, session, handleCl
                     </Box>
                 </CardContent>
 
-                <Button sx={{bgcolor: "#FFFFFF", borderRadius: "1rem"}} onClick={() => handleClickReview(session, reviewedStatus)}>
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#000000'}}>
-                        Review
-                    </Typography>
-                </Button>
+                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', m: 2}}>
+                    <Button size='medium' sx={{bgcolor: "#FFFFFF", borderRadius: "1rem",  width: 200, height: 50}} onClick={() => handleClickReview(session, reviewedStatus)}>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#000000'}}>
+                            Review
+                        </Typography>
+                    </Button>
+                </Box>
             </Card>
         )
     }

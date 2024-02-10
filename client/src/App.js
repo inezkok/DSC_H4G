@@ -15,7 +15,7 @@ function App() {
         <Route path="/volunteer/register/:activityId" element={<VolunteerRegForm />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/volunteer/history" element={<VolunteerHistory />} />
-        <Route path="/volunteer/feedback/:feedbackFormId" element={<VolunteerFeedback />} />
+        <Route path="/volunteer/feedback/:sessionId" element={<VolunteerFeedback />} />
       </Routes>
     </div>
   );

@@ -94,15 +94,6 @@
   background-color: #F4F4F4;
 }
 
-.field_info_container label {
-  width: 80%;
-  margin-left: 0rem;
-  gap: 1rem;
-  color:#000000;
-  font-size: 1rem;
-  font-weight: bold;
-}
-
 .field_info_container select {
   width: 80%;
   height: 2rem;
@@ -117,6 +108,13 @@
   color: red;
   font-size: 1rem;
   font-weight: bold;
+}
+
+.field_info_container h3 {
+  width: 80%;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #000000;
 }
 
 .create_activity_buttons {

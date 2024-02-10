@@ -25,6 +25,13 @@
     background-color: rgba(0, 212, 255, 1);
   }
 
+  .volunteer_history_content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 10%;
+  }
+
   .header {
     flex: auto;
     margin-top: 12rem;

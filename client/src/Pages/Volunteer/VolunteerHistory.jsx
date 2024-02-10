@@ -35,7 +35,7 @@ const VolunteerHistory = () => {
 
       setUsername(user.username);
       setRole(user.role);
-      setUserId(user.id);
+      setUserId(user._id);
 
       console.log(data);
 
@@ -52,7 +52,7 @@ const VolunteerHistory = () => {
 
   // get past sessions
   useEffect(() => {
-    if (loading && userId !== "") {
+    if (loading && userId && userId !== "") {
       axios.get(`http://localhost:4000/session/volunteer/${userId}`, { withCredentials: true })
         .then((response) => {
           const oldSessions = response.data.data.filter((session) => new Date(session.sessionDate) < new Date());
@@ -73,7 +73,7 @@ const VolunteerHistory = () => {
         toastId: 'stop duplicate review'
       });
     } else {
-      navigate(`/volunteer/feedback/${session.feedbackForm}`);
+      navigate(`/volunteer/feedback/${session._id}`);
     }
   }
 
@@ -82,20 +82,22 @@ const VolunteerHistory = () => {
       <div className="volunteer_history_page">
         <NavBar />
 
-        <h3>Your past volunteering sessions</h3>
+        <div className="volunteer_history_content">
+          <h3>Your past volunteering sessions</h3>
 
-        <Box className="sessions" sx={{display: 'flex', flexDirection: 'column', flexWrap: 'wrap', m: 2}}>
-          {pastSessions
-            .sort((a, b) => new Date(b.sessionDate) - new Date(a.sessionDate))
-            .map((session, index) => (
-              <VolunteerSessionFeedbackCard 
-                key={index} 
-                session={session} 
-                userId={userId} 
-                handleClickReview={handleClickReview}
-              />
-          ))}
-        </Box>
+          <Box className="sessions" sx={{display: 'flex', flexDirection: 'column', flexWrap: 'wrap', m: 2}}>
+            {pastSessions
+              .sort((a, b) => new Date(b.sessionDate) - new Date(a.sessionDate))
+              .map((session, index) => (
+                <VolunteerSessionFeedbackCard 
+                  key={index} 
+                  session={session} 
+                  userId={userId} 
+                  handleClickReview={handleClickReview}
+                />
+            ))}
+          </Box>
+        </div>
       </div>
 
       <ToastContainer />
