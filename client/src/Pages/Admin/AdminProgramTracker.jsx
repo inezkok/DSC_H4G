@@ -80,7 +80,7 @@ const AdminProgramTracker = () => {
 
   const handleEditActivity = (activity) => {
     // navigate to edit activity page
-    alert(`Edit ${activity.title}`);
+    alert(`Future development: Edit ${activity.title} (alternative is to delete and add new activty)`);
   }
 
   const deleteActivity = async (activity) => {

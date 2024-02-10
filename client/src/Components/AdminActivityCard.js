@@ -37,11 +37,6 @@ export default function AdminActivityCard({ activity, handleEditActivity, handle
         }
     };
 
-    const shortenDay = (day) => {
-        return day.substring(0, 3);
-    }
-
-
   return (
     <Card sx={{ display: 'flex', flexDirection: 'column', borderRadius: '1rem', m: 2, width: 400, backgroundColor: "#D0E199" }}>
         <CardContent>
