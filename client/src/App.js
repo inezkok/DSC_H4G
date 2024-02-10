@@ -12,7 +12,7 @@ function App() {
         <Route path="/admin/programtracker" element={<AdminProgramTracker />} />
         <Route path="/admin/activities/create" element={<AdminCreateActivity />} />
         <Route path="/volunteer/home" element={<VolunteerHome />} />
-        <Route path="/volunteer/register/:id" element={<VolunteerRegForm />} />
+        <Route path="/volunteer/register/:activityId" element={<VolunteerRegForm />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </div>

@@ -7,6 +7,7 @@ import { Box } from "@mui/material";
 import NavBar from "../../Components/Navbar";
 import "../../Styles/VolunteerHome.css"
 import VolunteerActivityCard from "../../Components/VolunteerActivityCard";
+import VolunteerSessionCard from "../../Components/VolunteerSessionCard";
 import { Container } from "@mui/material";
 
 
@@ -50,11 +51,16 @@ const VolunteerHome = () => {
         : (removeCookie("token"), navigate("/login"));
     };
 
-    const getSessions = async () => {
-      if (loading && userId !== "") {
-        axios.get(`http://localhost:4000/volunteer/${userId}`, { withCredentials: true })
+    verifyCookie();
+  }, [cookies, navigate, removeCookie, role, username]);
+
+  // get all sessions for the volunteer
+  useEffect(() => {
+    if (loading && username !== "") {
+        axios.get(`http://localhost:4000/session/volunteer/${userId}`, { withCredentials: true })
             .then((response) => {
-                setSessions(response.data.data);
+                const upcomingSessions = response.data.data.filter((session) => new Date(session.sessionDate) > new Date());
+                setSessions(upcomingSessions);
                 setLoading(false);
             })
             .catch((error) => {
@@ -62,12 +68,8 @@ const VolunteerHome = () => {
                 setLoading(true);
                 console.log("error");
             });
-      }
     }
-
-    verifyCookie();
-    getSessions();
-  }, [cookies, navigate, removeCookie, role, username]);
+  }, [username, userId, navigate, sessions, loading]);
 
   // get all activities avail for volunteering
   useEffect(() => {
@@ -92,26 +94,26 @@ const VolunteerHome = () => {
 
         <div className="header">
           <h3>Your upcoming sessions </h3>
-          <Box className="activities" sx={{display: 'flex', flexWrap: 'wrap', m: 2, width: "50rem"}}>
-          {sessions.map((session, index) => (
-              <VolunteerActivityCard 
-                activity={session}
-                key={session._id}
-              />
-          ))}
+          <Box className="activities" sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', m: 2}}>
+            {sessions
+              .sort((a, b) => new Date(a.sessionDate) - new Date(b.sessionDate))
+              .map((session, index) => (
+                <VolunteerSessionCard
+                  session={session}
+                  key={index}
+                />
+            ))}
           </Box>
         </div>
 
 
           <h3>Sign up for more volunteering sessions </h3>
-        <Box className="activities" sx={{display: 'flex', flexWrap: 'wrap', m: 2, width: "50rem"}}>
+        <Box className="activities" sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', m: 2}}>
           {activities.map((activity, index) => (
-            <Link to={`/volunteer/register/${activity._id}`} sx={{ textDecoration: 'none !important'}} key={activity._id} >
               <VolunteerActivityCard 
                 activity={activity}
+                handleClickActivity={activity => navigate(`/volunteer/register/${activity._id}`)}
               />
-            </Link>
-            
           ))}
         </Box>
       </div>

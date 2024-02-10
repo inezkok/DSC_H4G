@@ -20,24 +20,34 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import NavBar from "../../Components/Navbar";
 
 const VolunteerRegForm = () => {
+    const navigate = useNavigate();
+
+    const [loading, setLoading] = useState(false);
 
     const [cookies, removeCookie] = useCookies([]);
     const [username, setUsername] = useState("");
     const [userId, setUserId] = useState("");
     const [role, setRole] = useState("");
 
+    const { activityId } = useParams();
     const [activityTitle, setActivityTitle] = useState("");
-    const [activityDays, setActivityDays] = useState([]);
-    const [activityTime, setActivityTime] = useState("");
+    const [activitySchedule, setActivitySchedule] = useState([]);
+    const [regFormId, setRegFormId] = useState('');
     
-    const [sessionDate, setSessionDate] = useState('');
-    const [regForm, setRegForm] = useState('');
-    const [questions, setQuestions] = useState([]);
-    const [choices, setChoices] = useState([]); // what the users chose for each qn
+    const [questions, setQuestions] = useState([
+        "Please indicate your preferred communication means.",
+        "By filling up this form, you allow GUI to share your details with our supervisors and/or where needed, keep in contact, use your pictures for social media/website and you agree to indemnify GUI from being responsible for any injury or liability incurred during your stay at Kampung Kampus, home of GUI.",
+        "Kampung lunch is available on Saturdays GBK. It is plant-based. A contribute-what-feels-right amount is encouraged to sustain the kitchen operation. Would you want to order lunch?"
+    ]);
 
-    const navigate = useNavigate();
-    const { id } = useParams();
-    const [loading, setLoading] = useState(false);
+    const [sessionDate, setSessionDate] = useState("");
+    const [inputValue, setInputValue] = useState({
+        answer1: '',
+        answer2: '',
+        answer3: ''
+    });
+    
+    const { answer1, answer2, answer3 } = inputValue;
 
     dayjs.extend(customParseFormat);
 
@@ -68,21 +78,18 @@ const VolunteerRegForm = () => {
         };
 
         const getActivity = async () => {
-            if (userId !== "") {
+            if (userId !== "" && activityId !== "") {
                 try {
-                    const res = await axios.get(`http://localhost:4000/activities/${id}`, { withCredentials: true });
-                    // const selectedActivity = res.data.data.find(activity => activity._id === id);
-                    const selectedActivity = res.data;
+                    const res = await axios.get(`http://localhost:4000/activities/${activityId}`, { withCredentials: true });
+                    const selectedActivity = res.data.data;
                     console.log(selectedActivity);
                     if (res) {
                         setActivityTitle(selectedActivity.title);
-                        setActivityDays(selectedActivity.scheduleDays);
-                        setActivityTime(selectedActivity.scheduleTime);
-                        setRegForm(selectedActivity.registerForm);
+                        setActivitySchedule(selectedActivity.scheduleDays);
+                        setRegFormId(selectedActivity.registerForm);
                     } else {
                         console.error('Selected activity not found');
                     }
-                    console.log(activityTitle + 'at' + activityTime);
                 } catch (error) {
                     console.error('getActivity error:', error);
                 }
@@ -108,20 +115,28 @@ const VolunteerRegForm = () => {
 
     const handleSubmit = async () => {
         const data = {
-            userId,
             sessionDate,
-            choices
+            answers: [{
+                questionId: questions[0],
+                optionId: answer1
+            }, {
+                questionId: questions[1],
+                optionId: answer2
+            }, {
+                questionId: questions[2],
+                optionId: answer3
+            }]
         };
         setLoading(true);
 
         try {
-            if (sessionDate === "" || choices.length === 0) {
+            if (sessionDate === "" || data.answers.length === 0 || data.answers[0].optionId === "" || data.answers[1].optionId === "" || data.answers[2].optionId === "") {
                 setLoading(false);
                 handleError('Please fill out all fields');
                 return;
             }
 
-            const res = await axios.post(`http://localhost:4000//register-form/:regFormId/:userId/`, data, { withCredentials: true });
+            const res = await axios.post(`http://localhost:4000/response/register-form/${regFormId}/${userId}`, data, { withCredentials: true });
 
             if (res.data.success) {
                 setLoading(false);
@@ -141,6 +156,14 @@ const VolunteerRegForm = () => {
         navigate('/volunteer/home');
     };
 
+    const handleOnChange = (e) => {
+        const { name, value } = e.target;
+
+        setInputValue({
+            ...inputValue,
+            [name]: value
+        });
+    };
 
     return (
         <div className="session_registration_page">
@@ -148,83 +171,65 @@ const VolunteerRegForm = () => {
 
             <div className="session_registration_header">
                 <h1>Volunteer Registration</h1>
-                <h2>You are registering for</h2>
-                <h3>{activityTitle}</h3>
+                <h3>You are registering for</h3>
+                <h2>{activityTitle}</h2>
             </div>
 
             {loading ? (
                 <p>Loading...</p>
             ) : (
                 <div className="reg_form">
-
                     <div className="field_info_container">
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
 
                             <DatePicker 
                                 label="Session Date" 
                                 value={dayjs(sessionDate)} 
-                                onChange={(date) => setSessionDate(dayjs(date).format('MM/DD/YYYY'))} 
+                                onChange={(sessionDate) => setSessionDate(dayjs(sessionDate).format('MM/DD/YYYY'))} 
                                 minDate={dayjs('01/01/2024')} 
                                 maxDate={dayjs('20/12/2024')}
+                                shouldDisableDate={(date) => {
+                                    const dayOfWeek = dayjs(date).format('dddd');
+                                    return !activitySchedule.includes(dayOfWeek);
+                                }}
                                 sx={{bgcolor: '#C9E0E7', borderRadius: '5px'}}
                             />
                         </LocalizationProvider>
                     </div>
 
-                    {questions.map((question, index) => (
-  <FormControl key={index}>
-    <InputLabel>{question.questionText}</InputLabel>
-    <Select>
-      {question.options.map((option, optionIndex) => (
-        <MenuItem value={option.value} key={optionIndex}>
-          {option.value}
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-))}
+                    <div className="field_info_container">
+                        <label htmlFor="answer1">{questions[0]}<span>*</span></label>
+                        <select id="answer1" name="answer1" value={answer1} onChange={handleOnChange}>
+                            <option value="">Select preferred communication</option>
+                            <option value="Telegram">Telegram</option>
+                            <option value="WhatsApp">WhatsApp</option>
+                        </select>
+                    </div>
 
-
-                    {questions.map((question, index) => (
-                        <div className="field_info_container">
-                            <label htmlFor="title">{question[index].questionText}</label>
-                            <FormControl>
-                                <Select
-                                    value={choices}
-                                    label={question[index].questionText}
-                                    onChange={(e) => setChoices(e.target.value)}
-                                >
-                                    {questions[index].options.map((option, num) => (
-                                        <MenuItem value={option}>option </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </div>
-                    ))}
+                    <div className="field_info_container">
+                        <label htmlFor="answer2">{questions[1]}<span>*</span></label>
+                        <select id="answer2" name="answer2" value={answer2} onChange={handleOnChange}>
+                            <option value="">Select acknowlegment</option>
+                            <option value="Yes">Yes</option>
+                        </select>
+                    </div>
                         
                     <div className="field_info_container">
-                        <label htmlFor="location">Preferred communication means</label>
-                        <FormControl fullWidth>
-                        <Select
-                            id="demo-simple-select"
-                            value={choices}
-                            label="Preferred communiction means"
-                            onChange={(e) => setChoices(e.target.value)}
-                        >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
-                        </Select>
-                        </FormControl>
+                        <label htmlFor="answer3">{questions[2]}<span>*</span></label>
+                        <select id="answer3" name="answer3" value={answer3} onChange={handleOnChange}>
+                            <option value="">Select lunch arrangement</option>
+                            <option value="Yes, please!">Yes, please!</option>
+                            <option value="No, it's okay">No, it's okay</option>
+                            <option value="Yes, but I have food allergies">Yes, but I have food allergies</option>
+                        </select>
                     </div>
 
                     <div className="create_activity_buttons">
-                        <button onClick={handleSubmit} className="save_button">Confirm registration</button>
+                        <button onClick={handleSubmit} className="save_button">Register</button>
                         <button onClick={handleCancel} className="cancel_button">Cancel</button>
                     </div>
                 </div>
             )}
-
             <ToastContainer className="toast_container"/>
         </div>
     )

@@ -60,10 +60,10 @@
 .reg_form {
   display: flex;
   justify-content: center;
+  align-items: center;
   font-size: 3rem;
   gap: 1rem;
   flex-direction: column;
-  margin-left: 4rem;
 }
 
 .field_info_container {
@@ -95,10 +95,26 @@
 }
 
 .field_info_container label {
-  width: 30vw;
+  width: 80%;
   margin-left: 0rem;
   gap: 1rem;
   color:#000000;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.field_info_container select {
+  width: 80%;
+  height: 2rem;
+  margin-left: 0rem;
+  gap: 1rem;
+  color:#000000;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.field_info_container span {
+  color: red;
   font-size: 1rem;
   font-weight: bold;
 }
