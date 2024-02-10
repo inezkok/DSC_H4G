@@ -141,6 +141,7 @@ const AdminProgramTracker = () => {
 
   const handleClickActivity = (activity) => {
     alert(`Navigate to registration form ${activity.registerForm}`);
+    navigate(`/admin/activities/${activity.registerForm}`);
   }
 
   const handleClickSession = (session) => {
