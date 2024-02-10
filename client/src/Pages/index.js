@@ -4,6 +4,8 @@ export {default as Landing} from './General/Landing'
 
 export {default as AdminHome} from './Admin/AdminHome'
 export {default as VolunteerHome} from './Volunteer/VolunteerHome'
+export {default as VolunteerHistory} from './Volunteer/VolunteerHistory'
+export {default as VolunteerFeedback} from './Volunteer/VolunteerFeedback'
 export {default as Profile} from './General/Profile'
 
 export {default as AdminCreateActivity} from './Admin/AdminCreateActivity'

@@ -7,35 +7,39 @@ import { ToastContainer, toast } from "react-toastify";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import ListItemText from '@mui/material/ListItemText';
-import Select from '@mui/material/Select';
-import Checkbox from '@mui/material/Checkbox';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import NavBar from "../../Components/Navbar";
 
 const VolunteerRegForm = () => {
+    const navigate = useNavigate();
+
+    const [loading, setLoading] = useState(false);
 
     const [cookies, removeCookie] = useCookies([]);
     const [username, setUsername] = useState("");
+    const [userId, setUserId] = useState("");
     const [role, setRole] = useState("");
-    
-    const [title, setTitle] = useState('');
-    const [schedule, setSchedule] = useState('');
-    const [scheduleDay, setScheduleDay] = useState([]);
-    const [scheduleTimeStart, setScheduleTimeStart] = useState(dayjs('2022-04-17T15:30'))
-    const [scheduleTimeEnd, setScheduleTimeEnd] = useState(dayjs('2022-04-17T15:30'))
-    const [date, setDate] = useState('');
-    const [location, setLocation] = useState('');
 
-    const navigate = useNavigate();
-    const { id } = useParams();
-    const [loading, setLoading] = useState(false);
+    const { activityId } = useParams();
+    const [activityTitle, setActivityTitle] = useState("");
+    const [activitySchedule, setActivitySchedule] = useState([]);
+    const [regFormId, setRegFormId] = useState('');
+    
+    const [questions, setQuestions] = useState([
+        "Please indicate your preferred communication means.",
+        "By filling up this form, you allow GUI to share your details with our supervisors and/or where needed, keep in contact, use your pictures for social media/website and you agree to indemnify GUI from being responsible for any injury or liability incurred during your stay at Kampung Kampus, home of GUI.",
+        "Kampung lunch is available on Saturdays GBK. It is plant-based. A contribute-what-feels-right amount is encouraged to sustain the kitchen operation. Would you want to order lunch?"
+    ]);
+
+    const [sessionDate, setSessionDate] = useState("");
+    const [inputValue, setInputValue] = useState({
+        answer1: '',
+        answer2: '',
+        answer3: ''
+    });
+    
+    const { answer1, answer2, answer3 } = inputValue;
 
     dayjs.extend(customParseFormat);
 
@@ -56,6 +60,7 @@ const VolunteerRegForm = () => {
     
           setUsername(user.username);
           setRole(user.role);
+          setUserId(user._id);
     
           console.log(data);
     
@@ -64,8 +69,28 @@ const VolunteerRegForm = () => {
             : (removeCookie("token"), navigate("/login"));
         };
 
+        const getActivity = async () => {
+            if (userId !== "" && activityId !== "") {
+                try {
+                    const res = await axios.get(`http://localhost:4000/activities/${activityId}`, { withCredentials: true });
+                    const selectedActivity = res.data.data;
+                    console.log(selectedActivity);
+                    if (res) {
+                        setActivityTitle(selectedActivity.title);
+                        setActivitySchedule(selectedActivity.scheduleDays);
+                        setRegFormId(selectedActivity.registerForm);
+                    } else {
+                        console.error('Selected activity not found');
+                    }
+                } catch (error) {
+                    console.error('getActivity error:', error);
+                }
+            }
+        }
+
         verifyCookie();
-      }, [cookies, navigate, removeCookie, role, username]);
+        getActivity();
+      }, [cookies, navigate, removeCookie, role, username, userId, activityId]);
 
     const handleError = (err) => {
         toast.error(err, {
@@ -80,33 +105,36 @@ const VolunteerRegForm = () => {
         });
     }
 
-    const handleSave = async () => {
+    const handleSubmit = async () => {
         const data = {
-            title,
-            schedule,
-            date,
-            location
+            sessionDate,
+            answers: [{
+                questionId: questions[0],
+                optionId: answer1
+            }, {
+                questionId: questions[1],
+                optionId: answer2
+            }, {
+                questionId: questions[2],
+                optionId: answer3
+            }]
         };
         setLoading(true);
 
         try {
-            if (title === "") {
+            if (sessionDate === "" || data.answers.length === 0 || data.answers[0].optionId === "" || data.answers[1].optionId === "" || data.answers[2].optionId === "") {
                 setLoading(false);
                 handleError('Please fill out all fields');
                 return;
             }
 
-            let schedule = `${scheduleDay} ${scheduleTimeStart.format('HH:mm')} - ${scheduleTimeEnd.format('HH:mm')}`;
-            setSchedule(schedule);
-            setDate('');
-
-            const res = await axios.post(`http://localhost:4000/activities/`, data, { withCredentials: true });
+            const res = await axios.post(`http://localhost:4000/response/register-form/${regFormId}/${userId}`, data, { withCredentials: true });
 
             if (res.data.success) {
                 setLoading(false);
-                handleSuccess('Activity created successfully');
+                handleSuccess('Your sign up is successful!');
                 setTimeout(() => {
-                    navigate('/admin/home');
+                    navigate('/volunteer/home');
                 }, 3000);
             }
         } catch (error) {
@@ -115,19 +143,18 @@ const VolunteerRegForm = () => {
         }
     };
 
-    const handleChangeDay = (event) => {
-        const {
-          target: { value },
-        } = event;
-        setScheduleDay(
-          // On autofill we get a stringified value.
-          typeof value === 'string' ? value.split(',') : value,
-        );
-      };
-
     const handleCancel = () => {
         setLoading(false);
-        navigate('/admin/home');
+        navigate('/volunteer/home');
+    };
+
+    const handleOnChange = (e) => {
+        const { name, value } = e.target;
+
+        setInputValue({
+            ...inputValue,
+            [name]: value
+        });
     };
 
     return (
@@ -136,48 +163,70 @@ const VolunteerRegForm = () => {
 
             <div className="session_registration_header">
                 <h1>Volunteer Registration</h1>
-                <h2>You are registering for</h2>
-                <h3>insert activity name</h3>
+                <h3>You are registering for</h3>
+                <h2>{activityTitle}</h2>
             </div>
 
             {loading ? (
                 <p>Loading...</p>
             ) : (
                 <div className="reg_form">
-
                     <div className="field_info_container">
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
 
                             <DatePicker 
                                 label="Session Date" 
-                                value={dayjs(date)} 
-                                onChange={(date) => setDate(dayjs(date).format('MM/DD/YYYY'))} 
+                                value={dayjs(sessionDate)} 
+                                onChange={(sessionDate) => setSessionDate(dayjs(sessionDate).format('MM/DD/YYYY'))} 
                                 minDate={dayjs('01/01/2024')} 
                                 maxDate={dayjs('20/12/2024')}
+                                shouldDisableDate={(date) => {
+                                    const dayOfWeek = dayjs(date).format('dddd');
+                                    return !activitySchedule.includes(dayOfWeek);
+                                }}
                                 sx={{bgcolor: '#C9E0E7', borderRadius: '5px'}}
                             />
                         </LocalizationProvider>
                     </div>
-                    
+
                     <div className="field_info_container">
-                        <label htmlFor="title">Mobile number</label>
-                        <input type="text" placeholder={"Enter mobile number"} value={title} onChange={(e) => setTitle(e.target.value)} />
+                        <h3>{questions[0]}<span>*</span></h3>
+                        <select id="answer1" name="answer1" value={answer1} onChange={handleOnChange}>
+                            <option value="">Select preferred communication</option>
+                            <option value="Telegram">Telegram</option>
+                            <option value="WhatsApp">WhatsApp</option>
+                        </select>
+                    </div>
+
+                    <div className="field_info_container">
+                        <h3>{questions[1]}<span>*</span></h3>
+                        <select id="answer2" name="answer2" value={answer2} onChange={handleOnChange}>
+                            <option value="">Select acknowlegment</option>
+                            <option value="Yes">Yes</option>
+                        </select>
                     </div>
                         
                     <div className="field_info_container">
-                        <label htmlFor="location">Preferred communication means</label>
-                        <input type="text" placeholder={"Enter address"} value={location} onChange={(e) => setLocation(e.target.value)} />
+                        <h3>{questions[2]}<span>*</span></h3>
+                        <select id="answer3" name="answer3" value={answer3} onChange={handleOnChange}>
+                            <option value="">Select lunch arrangement</option>
+                            <option value="Yes, please!">Yes, please!</option>
+                            <option value="No, it's okay">No, it's okay</option>
+                            <option value="Yes, but I have food allergies">Yes, but I have food allergies</option>
+                        </select>
                     </div>
 
                     <div className="create_activity_buttons">
-                        <button onClick={handleSave} className="save_button">Confirm registration</button>
+                        <button onClick={handleSubmit} className="save_button">Register</button>
                         <button onClick={handleCancel} className="cancel_button">Cancel</button>
                     </div>
+
+                    <ToastContainer className="toast_container"/>
                 </div>
             )}
 
             <ToastContainer className="toast_container"/>
-        </div>
+        </div>  
     )
 };
 
