@@ -114,8 +114,7 @@ const AdminProgramTracker = () => {
   }
 
   const handleEditActivity = (activity) => {
-    // navigate to edit activity page
-    alert(`Currently not available: delete "${activity.title}" and re-add it to edit it.`);
+    navigate(`/admin/activities/${activity._id}/edit`);
   }
 
   const deleteActivity = async (activity) => {
