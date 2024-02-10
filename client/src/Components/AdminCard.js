@@ -14,22 +14,21 @@ const StyledCard = styled((props) => (
       // margin: "0 auto",
       marginBottom: "2rem",
       marginTop: "2rem",
-      marginRight: "6rem",
+      marginRight: "3rem",
       display: "inline-block",
       backgroundColor: '#D6F379' 
   }));
 
-  const AdminCardComponent = (props) => {
-    const {title,content}=props
-  
+  export default function AdminCardComponent({ title, count }) {
+
     return (
       <StyledCard sx={{ minWidth: 275 }} elevation={5}>
         <CardHeader title={title} />
-        <CardContent>{content}
+        <CardContent sx={{ml: 14}}>
+          {count}
         </CardContent>
       </StyledCard>
     );
   };
   
-  export default AdminCardComponent;
   
