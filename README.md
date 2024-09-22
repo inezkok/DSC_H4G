@@ -53,6 +53,6 @@ npm start
 ```
 
 ## Demo
-View the demo [here](https://docs.google.com/presentation/d/1GcVBTt498A5fX1K4l015wGk3O_XwIwg8/edit?usp=sharing&ouid=117888144040016099674&rtpof=true&sd=true)
+View the pitch deck [here](https://docs.google.com/presentation/d/1GcVBTt498A5fX1K4l015wGk3O_XwIwg8/edit?usp=sharing&ouid=117888144040016099674&rtpof=true&sd=true)
 
-View our pitch deck [here](https://drive.google.com/file/d/1qP3_I4e0KzwzNuz2QBKrzRkqfb5o3VCo/view?usp=sharing)
+View the demo [here](https://drive.google.com/file/d/1qP3_I4e0KzwzNuz2QBKrzRkqfb5o3VCo/view?usp=sharing)
