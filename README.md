@@ -3,8 +3,6 @@
 ## Problem Statement
 Pillar 1 (Ground-Up Initiative): Develop and implement a robust and reliable system to accurately track and measure the number of people impacted by volunteering efforts, as well as assess the depth and nature of this impact
 
-<insert image of application>
-
 ## About
 * The project is a desktop application to be used by nonprofit organisation Ground-Up Initiative to manage and track volunteering efforts and impact.
 * It **uses the MERN (MongoDB, Express.js, React.js, Node.js) stack**.
@@ -55,4 +53,6 @@ npm start
 ```
 
 ## Demo
-View the demo here <insert link>
+View the demo [here](https://docs.google.com/presentation/d/1GcVBTt498A5fX1K4l015wGk3O_XwIwg8/edit?usp=sharing&ouid=117888144040016099674&rtpof=true&sd=true)
+
+View our pitch deck [here](https://drive.google.com/file/d/1qP3_I4e0KzwzNuz2QBKrzRkqfb5o3VCo/view?usp=sharing)
